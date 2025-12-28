@@ -74,7 +74,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          tags:  stockquote-react:github-latest
+          tags:  lionelschiepers/stockquote-react:github-latest
           push: true
 
       - name: Docker Scout Quickview
