@@ -32,10 +32,18 @@ FROM nginx:alpine AS production
 # Install a small HTTP client for the healthcheck. Avoid full update/upgrade to keep image small.
 RUN apk add --no-cache curl
 
+RUN npm r -g npm
+
 # Copy the built application from the builder stage
 COPY --from=builder /app/out /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Create dedicated non-root user for security
+RUN useradd -m appuser && \
+    chown appuser:appuser /usr/share/nginx/html
+
+USER appuser
 
 # Expose port 80
 EXPOSE 80
