@@ -9,12 +9,6 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
@@ -22,8 +16,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      security-events: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,12 +64,83 @@ jobs:
         with:
           path: ./out
 
-  deploy:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          tags:  stockquote-react:github-latest
+          push: true
+
+      - name: Docker Scout Quickview
+        uses: docker/scout-action@v1
+        with:
+          command: quickview
+          image: lionelschiepers/stockquote-react:github-latest
+
+      - name: Docker Scout CVEs with SARIF output
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: lionelschiepers/stockquote-react:github-latest
+          sarif-file: report.sarif
+          only-fixed: true
+          ignore-base: false
+          only-severities: "critical,high,medium"
+
+      - name: Docker Scout SBOM
+        uses: docker/scout-action@v1
+        with:
+          command: sbom
+          image: lionelschiepers/stockquote-react:github-latest
+          output: sbom.json
+
+      - name: Docker Scout Recommendations
+        uses: docker/scout-action@v1
+        with:
+          command: recommendations
+          image: lionelschiepers/stockquote-react:github-latest
+
+      - name: Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'lionelschiepers/stockquote-react:github-latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: Upload Trivy SARIF Report
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Publish SARIF Report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sarif-report
+          path: report.sarif
+
+      - name: Upload Docker Scout SARIF Report
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: report.sarif
+
+  Deploy:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: Build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
