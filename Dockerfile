@@ -38,10 +38,9 @@ COPY --from=builder /app/out /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create dedicated non-root user for security
-RUN adduser --disabled-password --comment "" appuser
-RUN chown appuser:appuser /usr/share/nginx/html
-
-USER appuser
+# RUN adduser --disabled-password --comment "" appuser
+# RUN chown appuser:appuser /usr/share/nginx/html
+# USER appuser
 
 # Expose port 80
 EXPOSE 80
