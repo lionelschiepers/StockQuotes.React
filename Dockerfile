@@ -32,8 +32,6 @@ FROM nginx:alpine AS production
 # Install a small HTTP client for the healthcheck. Avoid full update/upgrade to keep image small.
 RUN apk add --no-cache curl
 
-RUN npm r -g npm
-
 # Copy the built application from the builder stage
 COPY --from=builder /app/out /usr/share/nginx/html
 
