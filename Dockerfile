@@ -42,7 +42,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # RUN chown appuser:appuser /usr/share/nginx/html
 # USER appuser
 
-# Expose port 80
 EXPOSE 80
 
 # simple HTTP healthcheck (uses curl)
