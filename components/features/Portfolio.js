@@ -37,10 +37,10 @@ class SecurityPostion {
 
   getDividendYield(inEur = false) {
     let dividend =
-      this.Security == null ? 0.0 : this.Security.trailingAnnualDividendRate;
+      this.Security == null ? 0 : this.Security.trailingAnnualDividendRate;
     dividend *= this.NumberOfShares;
 
-    if (Number.isNaN(dividend)) return 0.0;
+    if (Number.isNaN(dividend)) return 0;
 
     dividend *= this.getTaxeRate();
 
@@ -57,17 +57,17 @@ class SecurityPostion {
   }
 
   getGainDiff() {
-    if (this.MarketPrice == null || this.MarketCost == null) return 0.0;
-    if (this.NumberOfShares === 0) return 0.0;
+    if (this.MarketPrice == null || this.MarketCost == null) return 0;
+    if (this.NumberOfShares === 0) return 0;
 
-    return (100.0 * this.MarketPrice) / this.MarketCost - 100.0;
+    return (100 * this.MarketPrice) / this.MarketCost - 100;
   }
 
   getDayGain(inEUR) {
     let price = this.Security == null ? null : this.Security.regularMarketPrice;
     let previousPrice =
       this.Security == null ? null : this.Security.regularMarketPreviousClose;
-    if (price == null || previousPrice == null) return 0.0;
+    if (price == null || previousPrice == null) return 0;
 
     let gain = (price - previousPrice) * this.NumberOfShares;
 
@@ -80,7 +80,7 @@ class SecurityPostion {
       this.Security == null ? null : this.Security.regularMarketPreviousClose;
     if (price == null || previousPrice == null) return null;
 
-    return 100.0 * (price / previousPrice - 1.0);
+    return 100 * (price / previousPrice - 1);
   }
 }
 
@@ -111,7 +111,7 @@ export class Portfolio {
         dividend += position.getDividendYield(true);
       });
 
-    return (100.0 * dividend) / marketPrice;
+    return (100 * dividend) / marketPrice;
   }
 
   static getDividendRate(positions) {
@@ -136,7 +136,7 @@ export class Portfolio {
       });
 
     let previousDayMarketPrice = marketPrice - dayGain;
-    if (previousDayMarketPrice === 0) return 0.0;
+    if (previousDayMarketPrice === 0) return 0;
 
     return dayGain / previousDayMarketPrice;
   }

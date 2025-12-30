@@ -210,7 +210,7 @@ const YahooFinance = () => {
             : rowData.Security.regularMarketPreviousClose;
         if (price == null || previousPrice == null) return <div />;
 
-        cellData = 100.0 * (price / previousPrice - 1.0);
+        cellData = 100 * (price / previousPrice - 1);
         postData = '%';
       }
 
@@ -458,7 +458,7 @@ const YahooFinance = () => {
             <div className="text-gray-900 dark:text-white">
               Total Gain:&nbsp;
               <span className="font-semibold">
-                {(gain * 100.0).toLocaleString('fr-FR', {
+                {(gain * 100).toLocaleString('fr-FR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
@@ -468,7 +468,7 @@ const YahooFinance = () => {
             <div className="text-gray-900 dark:text-white">
               Day diff:&nbsp;
               <span className="font-semibold">
-                {(dayDiff * 100.0).toLocaleString('fr-FR', {
+                {(dayDiff * 100).toLocaleString('fr-FR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
