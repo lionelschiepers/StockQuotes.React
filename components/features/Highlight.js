@@ -41,9 +41,7 @@ class Highlight extends Component {
   }
 
   highlight = () => {
-    this.codeNode &&
-      this.codeNode.current &&
-      hljs.highlightElement(this.codeNode.current);
+    this.codeNode?.current && hljs.highlightElement(this.codeNode.current);
   };
 
   render() {
