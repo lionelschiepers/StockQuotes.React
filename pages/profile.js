@@ -12,7 +12,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <main className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col items-center profile-header text-center mb-8">
         <div className="mb-4">
           <Image
@@ -33,7 +33,7 @@ export default function Profile() {
       <div>
         <Highlight>{JSON.stringify(user, null, 2)}</Highlight>
       </div>
-    </div>
+    </main>
   );
 }
 

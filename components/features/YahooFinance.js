@@ -445,7 +445,7 @@ const YahooFinance = () => {
   }
 
   return (
-    <div className="yahoo-finance-container bg-white dark:bg-gray-800 p-4 rounded-lg">
+    <main className="yahoo-finance-container bg-white dark:bg-gray-800 p-4 rounded-lg">
       <div className="text-left mb-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -619,7 +619,7 @@ const YahooFinance = () => {
           rowProps={{ portfolio, displayInEUR }}
         />
       </div>
-    </div>
+    </main>
   );
 };
 
