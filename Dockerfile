@@ -38,8 +38,8 @@ COPY --from=builder /app/out /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Switch to the non-root nginx user for security
-RUN chown -R nginx:nginx /usr/share/nginx/html
-USER nginx
+# RUN chown -R nginx:nginx /usr/share/nginx/html
+# USER nginx
 
 EXPOSE 80
 
