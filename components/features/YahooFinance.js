@@ -247,7 +247,11 @@ const YahooFinance = () => {
           // Use toLocaleString to add separators, then remove any decimal part
           displayValue = Math.round(cellData).toLocaleString('fr-FR');
         } else {
-          displayValue = cellData.toFixed(2).replace('.', ','); // French decimal format
+          // Format with French locale, showing up to 2 decimal places, but no minimum
+          displayValue = cellData.toLocaleString('fr-FR', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+          });
         }
       }
 
