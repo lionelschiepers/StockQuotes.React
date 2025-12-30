@@ -458,13 +458,21 @@ const YahooFinance = () => {
             <div className="text-gray-900 dark:text-white">
               Total Gain:&nbsp;
               <span className="font-semibold">
-                {(gain * 100.0).toFixed(2)}%
+                {(gain * 100.0).toLocaleString('fr-FR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+                %
               </span>
             </div>
             <div className="text-gray-900 dark:text-white">
               Day diff:&nbsp;
               <span className="font-semibold">
-                {(dayDiff * 100.0).toFixed(2)}%
+                {(dayDiff * 100.0).toLocaleString('fr-FR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+                %
               </span>
             </div>
             <div className="text-gray-900 dark:text-white">
@@ -474,9 +482,13 @@ const YahooFinance = () => {
             <div className="text-gray-900 dark:text-white">
               Dividend Yield:&nbsp;
               <span className="font-semibold">
-                {dividendYield.toFixed(2)}%
-              </span>{' '}
-              (
+                {dividendYield.toLocaleString('fr-FR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+                %
+              </span>
+              &nbsp;(
               <span className="font-semibold">
                 {formatInKEur(dividendRate)}
               </span>
