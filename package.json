@@ -9,6 +9,8 @@
     "@testing-library/user-event": "^14.6.1",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.5.0"
   },
   "dependencies": {
@@ -35,7 +37,14 @@
     "lint": "next lint",
     "build:proxy": "cd api && npm install --production && npm run build:production",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out"
+    "deploy": "gh-pages -d out",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "eslintConfig": {
     "extends": [
