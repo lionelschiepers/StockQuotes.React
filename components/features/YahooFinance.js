@@ -308,6 +308,7 @@ const YahooFinance = () => {
 
       return (
         <div
+          role="listitem"
           style={{
             ...style,
             display: 'flex',
