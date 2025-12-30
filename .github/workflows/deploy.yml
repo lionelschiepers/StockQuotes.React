@@ -12,7 +12,7 @@ on:
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:
@@ -74,7 +74,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          tags:  lionelschiepers/stockquote-react:github-latest
+          tags: lionelschiepers/stockquote-react:github-latest
           push: true
 
       - name: Docker Scout Quickview
@@ -91,7 +91,7 @@ jobs:
           sarif-file: report.sarif
           only-fixed: true
           ignore-base: false
-          only-severities: "critical,high,medium"
+          only-severities: 'critical,high,medium'
 
       - name: Docker Scout SBOM
         uses: docker/scout-action@v1

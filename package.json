@@ -11,7 +11,8 @@
     "eslint-config-next": "^16.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "postcss": "^8.5.0"
+    "postcss": "^8.5.0",
+    "prettier": "^3.7.4"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.11.0",
@@ -38,17 +39,13 @@
     "build:proxy": "cd api && npm install --production && npm run build:production",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d out",
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write ."
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
-    ]
-  },
-  "eslintConfig": {
-    "extends": [
-      "next/core-web-vitals"
     ]
   },
   "browserslist": {

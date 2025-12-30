@@ -7,4 +7,6 @@
 // export { useDebounce } from './useDebounce';
 // export { useApi } from './useApi';
 
-console.log('Custom hooks directory created. Add your hooks here and export them from this index file.');
+console.log(
+  'Custom hooks directory created. Add your hooks here and export them from this index file.'
+);
