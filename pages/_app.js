@@ -17,6 +17,8 @@ const providerConfig = {
   }
 };
 
+import PropTypes from 'prop-types';
+
 function MyApp({ Component, pageProps }) {
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -59,5 +61,10 @@ function MyApp({ Component, pageProps }) {
     </Auth0Provider>
   );
 }
+
+MyApp.propTypes = {
+  Component: PropTypes.elementType.isRequired,
+  pageProps: PropTypes.object.isRequired
+};
 
 export default MyApp;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth0 } from '@auth0/auth0-react';
+import PropTypes from 'prop-types';
 
 const NavBar = ({ darkMode, toggleDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -219,6 +220,11 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
       </div>
     </nav>
   );
+};
+
+NavBar.propTypes = {
+  darkMode: PropTypes.bool.isRequired,
+  toggleDarkMode: PropTypes.func.isRequired
 };
 
 export default NavBar;
