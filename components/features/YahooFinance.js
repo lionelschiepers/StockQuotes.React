@@ -21,7 +21,6 @@ const YahooFinance = () => {
   const [sortDirection, setSortDirection] = useState(null);
   const [displayInEUR, setDisplayInEUR] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [minDisplayTime, setMinDisplayTime] = useState(Date.now()); // Initialize with current time
 
   // Load portfolio data when component mounts or user changes
   useEffect(() => {
@@ -29,9 +28,11 @@ const YahooFinance = () => {
 
     const loadPortfolio = async () => {
       setIsLoading(true);
-      setMinDisplayTime(Date.now()); // Track when loading started
+      const startTime = Date.now(); // Track when loading started
       try {
-        const portfolioUri = `https://raw.githubusercontent.com/lionelschiepers/StockQuote.Portfolio/main/Portfolio/${encodeURIComponent(user.email)}.csv`;
+        const portfolioUri = `https://raw.githubusercontent.com/lionelschiepers/StockQuote.Portfolio/main/Portfolio/${encodeURIComponent(
+          user.email
+        )}.csv`;
 
         const portfolioData = await Portfolio.Load(portfolioUri);
         setPortfolio(portfolioData);
@@ -68,7 +69,7 @@ const YahooFinance = () => {
         console.error('Failed to load portfolio:', error);
       } finally {
         // Ensure skeleton shows for at least 2 seconds
-        const loadTime = Date.now() - minDisplayTime;
+        const loadTime = Date.now() - startTime;
         if (loadTime < 2000) {
           setTimeout(() => setIsLoading(false), 2000 - loadTime);
         } else {
@@ -78,7 +79,7 @@ const YahooFinance = () => {
     };
 
     loadPortfolio();
-  }, [isAuthenticated, user, minDisplayTime]);
+  }, [isAuthenticated, user]);
 
   // Sort functionality
   const internalSort = useCallback(
@@ -379,7 +380,7 @@ const YahooFinance = () => {
     }
   );
 
-  YahooFinanceRow.propTypes = {
+  RowComponent.propTypes = {
     index: PropTypes.number.isRequired,
     style: PropTypes.object, // style can be optional based on React Window's usage
     portfolio: PropTypes.arrayOf(
@@ -522,98 +523,89 @@ const YahooFinance = () => {
       </div>
       <div className="yahoo-finance-table-wrapper">
         <div className="flex font-bold border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
-          <div
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 350px', minWidth: '200px' }}
             onClick={createSortHandler('Name')}
             onKeyDown={handleKeyDown(createSortHandler('Name'))}
-            role="button"
-            tabIndex={0}
           >
             Name {getSortIndicator('Name')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 110px', minWidth: '70px' }}
             onClick={createSortHandler('Security.regularMarketPrice')}
             onKeyDown={handleKeyDown(
               createSortHandler('Security.regularMarketPrice')
             )}
-            role="button"
-            tabIndex={0}
           >
             Price {getSortIndicator('Security.regularMarketPrice')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 80px', minWidth: '70px' }}
             onClick={createSortHandler('Diff')}
             onKeyDown={handleKeyDown(createSortHandler('Diff'))}
-            role="button"
-            tabIndex={0}
           >
             Diff {getSortIndicator('Diff')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 80px', minWidth: '70px' }}
             onClick={createSortHandler('NumberOfShares')}
             onKeyDown={handleKeyDown(createSortHandler('NumberOfShares'))}
-            role="button"
-            tabIndex={0}
           >
             Shares {getSortIndicator('NumberOfShares')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 120px', minWidth: '100px' }}
             onClick={createSortHandler('MarketCost')}
             onKeyDown={handleKeyDown(createSortHandler('MarketCost'))}
-            role="button"
-            tabIndex={0}
           >
             Market Cost {getSortIndicator('MarketCost')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 130px', minWidth: '100px' }}
             onClick={createSortHandler('MarketPrice')}
             onKeyDown={handleKeyDown(createSortHandler('MarketPrice'))}
-            role="button"
-            tabIndex={0}
           >
             Market Price {getSortIndicator('MarketPrice')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 90px', minWidth: '90px' }}
             onClick={createSortHandler('Gain')}
             onKeyDown={handleKeyDown(createSortHandler('Gain'))}
-            role="button"
-            tabIndex={0}
           >
             Gain {getSortIndicator('Gain')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 90px', minWidth: '90px' }}
             onClick={createSortHandler('GainPercent')}
             onKeyDown={handleKeyDown(createSortHandler('GainPercent'))}
-            role="button"
-            tabIndex={0}
           >
             Gain % {getSortIndicator('GainPercent')}
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 120px', minWidth: '100px' }}
             onClick={createSortHandler('PastGain')}
             onKeyDown={handleKeyDown(createSortHandler('PastGain'))}
-            role="button"
-            tabIndex={0}
           >
             Past Gain {getSortIndicator('PastGain')}
-          </div>
+          </button>
         </div>
       </div>
       <div className="yahoo-finance-table-wrapper">

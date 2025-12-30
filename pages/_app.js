@@ -20,31 +20,31 @@ const providerConfig = {
 import PropTypes from 'prop-types';
 
 function MyApp({ Component, pageProps }) {
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('theme') === 'dark';
-  });
+  const [darkMode, setDarkMode] = useState(false);
 
-  // Apply dark mode class to the HTML element when the state changes
+  useEffect(() => {
+    const useDark =
+      localStorage.getItem('theme') === 'dark' ||
+      (!('theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDarkMode(useDark);
+  }, []);
+
+  // Apply dark mode class and save preference when the state changes
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
 
   // Toggle dark mode
   const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
-
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    setDarkMode(!darkMode);
   };
 
   return (
