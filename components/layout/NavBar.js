@@ -60,6 +60,7 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
                 onClick={toggleDarkMode}
                 className="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 title="Toggle dark mode"
+                aria-label="Toggle dark mode"
               >
                 {darkMode ? (
                   <svg
@@ -107,6 +108,8 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
                 <button
                   onClick={toggle}
                   className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800 focus:ring-white"
+                  aria-label="User menu"
+                  aria-haspopup="true"
                 >
                   <Image
                     className="h-8 w-8 rounded-full"
@@ -142,6 +145,8 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
             <button
               onClick={toggle}
               className="bg-white dark:bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
             >
               <svg
                 className="h-6 w-6"
