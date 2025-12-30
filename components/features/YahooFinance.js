@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from './Portfolio';
 import { CSVLink } from 'react-csv';
 import SkeletonLoader from '../ui/SkeletonLoader';
+import PropTypes from 'prop-types';
 
 const YahooFinance = () => {
   const { isAuthenticated, user } = useAuth0();
@@ -373,6 +374,37 @@ const YahooFinance = () => {
       );
     }
   );
+
+  YahooFinanceRow.propTypes = {
+    index: PropTypes.number.isRequired,
+    style: PropTypes.object, // style can be optional based on React Window's usage
+    portfolio: PropTypes.arrayOf(
+      PropTypes.shape({
+        Ticker: PropTypes.string,
+        Name: PropTypes.string,
+        NumberOfShares: PropTypes.number,
+        MarketCost: PropTypes.number,
+        MarketCostEUR: PropTypes.number,
+        MarketPrice: PropTypes.number,
+        MarketPriceEUR: PropTypes.number,
+        PastGain: PropTypes.number,
+        PastGainEUR: PropTypes.number,
+        Currency: PropTypes.string,
+        RateToEUR: PropTypes.number,
+        Security: PropTypes.shape({
+          regularMarketPrice: PropTypes.number,
+          regularMarketPreviousClose: PropTypes.number,
+          trailingAnnualDividendRate: PropTypes.number
+        }),
+        getGain: PropTypes.func,
+        getGainDiff: PropTypes.func,
+        getDayDiff: PropTypes.func,
+        getDividendYield: PropTypes.func,
+        getTaxeRate: PropTypes.func
+      })
+    ).isRequired,
+    displayInEUR: PropTypes.bool.isRequired
+  };
 
   // Memoized sort indicator
   const getSortIndicator = useCallback(
