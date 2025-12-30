@@ -444,32 +444,34 @@ const YahooFinance = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="text-gray-900 dark:text-white">
-              Market Price:{' '}
+              Market Price:&nbsp;
               <span className="font-semibold">{formatInKEur(marketPrice)}</span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Market Cost:{' '}
+              Market Cost:&nbsp;
               <span className="font-semibold">{formatInKEur(marketCost)}</span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Total Gain:{' '}
+              Total Gain:&nbsp;
               <span className="font-semibold">
                 {(gain * 100.0).toFixed(2)}%
               </span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Day diff:{' '}
+              Day diff:&nbsp;
               <span className="font-semibold">
                 {(dayDiff * 100.0).toFixed(2)}%
               </span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Past Gain:{' '}
+              Past Gain:&nbsp;
               <span className="font-semibold">{formatInKEur(pastGain)}</span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Dividend Yield:{' '}
-              <span className="font-semibold">{dividendYield.toFixed(2)}%</span>{' '}
+              Dividend Yield:&nbsp;
+              <span className="font-semibold">
+                {dividendYield.toFixed(2)}%
+              </span>{' '}
               (
               <span className="font-semibold">
                 {formatInKEur(dividendRate)}
