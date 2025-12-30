@@ -39,7 +39,7 @@ export async function GetRate(from, to) {
       }
 
       // EUR => EUR
-      result.push({ currency: 'EUR', rate: 1.0 });
+      result.push({ currency: 'EUR', rate: 1 });
 
       Cache.Rates = result;
     });
