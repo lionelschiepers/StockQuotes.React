@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { List } from 'react-window';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from './Portfolio';
