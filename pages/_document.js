@@ -5,6 +5,10 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta
+          name="description"
+          content="A stock portfolio tracking application."
+        ></meta>
       </Head>
       <body>
         <Main />
