@@ -488,7 +488,7 @@ const YahooFinance = () => {
                 })}
                 %
               </span>
-              &nbsp;(
+              (
               <span className="font-semibold">
                 {formatInKEur(dividendRate)}
               </span>
