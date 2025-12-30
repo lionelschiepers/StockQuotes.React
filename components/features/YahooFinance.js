@@ -53,7 +53,7 @@ const YahooFinance = () => {
         });
 
         const totalGain =
-          totalMarketCost === 0 ? 0 : totalMarketPrice / totalMarketCost - 1.0;
+          totalMarketCost === 0 ? 0 : totalMarketPrice / totalMarketCost - 1;
         const totalDayDiff = Portfolio.getDayDiff(portfolioData);
         const totalDividendYield = Portfolio.getDividendRatio(portfolioData);
         const totalDividendRate = Portfolio.getDividendRate(portfolioData);
