@@ -152,9 +152,9 @@ export class Portfolio {
       const parsedCsv = papa.parse(res.data, { header: true }).data;
 
       parsedCsv.forEach((data) => {
-        data.Shares = Math.abs(parseFloat(data.Shares));
-        data.Price = parseFloat(data.Price);
-        data.Commission = parseFloat(data.Commission);
+        data.Shares = Math.abs(Number.parseFloat(data.Shares));
+        data.Price = Number.parseFloat(data.Price);
+        data.Commission = Number.parseFloat(data.Commission);
 
         let item = result.find((o) => o.Ticker === data.Symbol);
         if (item == null) {

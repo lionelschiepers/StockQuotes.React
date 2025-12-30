@@ -29,7 +29,7 @@ class Highlight extends Component {
         this.setState({ loaded: true }, this.highlight);
       } catch (e) {
         console.error(e);
-        throw Error(`Cannot register the language ${language}`);
+        throw new Error(`Cannot register the language ${language}`);
       }
     } else {
       this.setState({ loaded: true });

@@ -170,7 +170,7 @@ const YahooFinance = () => {
 
   // Helper function to format values in K€ with French dot separators
   const formatInKEur = useCallback((value) => {
-    if (value == null || isNaN(value)) return '';
+    if (value == null || Number.isNaN(value)) return '';
     const kValue = value / 1000;
     // Format with French locale and replace spaces with dots, then add K€
     return (
@@ -186,7 +186,7 @@ const YahooFinance = () => {
   // Price rendering function
   const renderPrice = useCallback(
     (cellData, dataKey, rowData) => {
-      if (isNaN(cellData)) return <div />;
+      if (Number.isNaN(cellData)) return <div />;
       let postData = '';
 
       if (

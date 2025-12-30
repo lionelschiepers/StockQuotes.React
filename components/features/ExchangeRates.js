@@ -30,11 +30,13 @@ export async function GetRate(from, to) {
 
         result.push({
           currency: currency.toUpperCase(),
-          rate: parseFloat(rate)
+          rate: Number.parseFloat(rate)
         });
-
         if (currency === 'GBP') {
-          result.push({ currency: 'GBp', rate: 100.0 * parseFloat(rate) });
+          result.push({
+            currency: 'GBp',
+            rate: 100.0 * Number.parseFloat(rate)
+          });
         }
       }
 
