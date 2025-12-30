@@ -13,7 +13,7 @@ const providerConfig = {
   clientId: config.clientId,
   ...(config.audience ? { audience: config.audience } : null),
   authorizationParams: {
-    redirect_uri: typeof window !== 'undefined' ? window.location.origin : ''
+    redirect_uri: typeof window === 'object' ? window.location.origin : ''
   }
 };
 
@@ -26,7 +26,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     const useDark =
       localStorage.getItem('theme') === 'dark' ||
-      (!('theme' in localStorage) &&
+      (localStorage.getItem('theme') === null &&
         window.matchMedia('(prefers-color-scheme: dark)').matches);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDarkMode(useDark);
