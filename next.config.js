@@ -6,4 +6,4 @@ const nextConfig = {
   basePath: process.env.PAGES_BASE_PATH || ''
 };
 
-module.exports = nextConfig;
+export default nextConfig;
