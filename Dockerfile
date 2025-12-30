@@ -37,10 +37,9 @@ COPY --from=builder /app/out /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Create dedicated non-root user for security
-# RUN adduser --disabled-password --comment "" appuser
-# RUN chown appuser:appuser /usr/share/nginx/html
-# USER appuser
+# Switch to the non-root nginx user for security
+RUN chown -R nginx:nginx /usr/share/nginx/html
+USER nginx
 
 EXPOSE 80
 
