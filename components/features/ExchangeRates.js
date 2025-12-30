@@ -13,7 +13,12 @@ export async function GetRate(from, to) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(res.data, 'text/xml');
 
-      let nsResolver = doc.createNSResolver(doc.documentElement);
+      let nsResolver = (prefix) => {
+        if (prefix === 'gesmes') {
+          return doc.documentElement.lookupNamespaceURI('gesmes');
+        }
+        return null;
+      };
 
       let nodes = doc.evaluate(
         "/gesmes:Envelope/*[name()='Cube']/*[name()='Cube']/*[name()='Cube']",
