@@ -17,4 +17,6 @@
 //   USER_PREFERENCES: 'userPreferences'
 // };
 
-console.log('Constants directory created. Add your application constants here and export them from this index file.');
+console.log(
+  'Constants directory created. Add your application constants here and export them from this index file.'
+);

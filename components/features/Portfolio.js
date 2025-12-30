@@ -1,7 +1,7 @@
-import papa from "papaparse";
-import axios from "axios";
-import { GetRate } from "./ExchangeRates";
-import { YahooFinanceLoader, YahooFinanceFields } from "./YahooFinanceLoader";
+import papa from 'papaparse';
+import axios from 'axios';
+import { GetRate } from './ExchangeRates';
+import { YahooFinanceLoader, YahooFinanceFields } from './YahooFinanceLoader';
 
 class SecurityPostion {
   Ticker;
@@ -20,18 +20,18 @@ class SecurityPostion {
   Security; // price of one share
 
   getTaxeRate() {
-    if (this.Ticker.indexOf(".") < 0) return 0.85 * 0.7;
-    else if (this.Ticker.endsWith(".BR")) return 0.7;
-    else if (this.Ticker.endsWith(".VX")) return 0.65 * 0.7;
-    else if (this.Ticker.endsWith(".ST")) return 0.7 * 0.7;
-    else if (this.Ticker.endsWith(".DE")) return 0.7362 * 0.7;
-    else if (this.Ticker.endsWith(".CA")) return 0.75 * 0.7;
-    else if (this.Ticker.endsWith(".HE")) return 0.8 * 0.7;
-    else if (this.Ticker.endsWith(".LU")) return 0.85 * 0.7;
-    else if (this.Ticker.endsWith(".AS")) return 0.85 * 0.7;
-    else if (this.Ticker.endsWith(".PA")) return 0.872 * 0.7;
-    else if (this.Ticker.endsWith(".L")) return 0.7;
-    else if (this.Ticker.endsWith(".MC")) return 0.81 * 0.7;
+    if (this.Ticker.indexOf('.') < 0) return 0.85 * 0.7;
+    else if (this.Ticker.endsWith('.BR')) return 0.7;
+    else if (this.Ticker.endsWith('.VX')) return 0.65 * 0.7;
+    else if (this.Ticker.endsWith('.ST')) return 0.7 * 0.7;
+    else if (this.Ticker.endsWith('.DE')) return 0.7362 * 0.7;
+    else if (this.Ticker.endsWith('.CA')) return 0.75 * 0.7;
+    else if (this.Ticker.endsWith('.HE')) return 0.8 * 0.7;
+    else if (this.Ticker.endsWith('.LU')) return 0.85 * 0.7;
+    else if (this.Ticker.endsWith('.AS')) return 0.85 * 0.7;
+    else if (this.Ticker.endsWith('.PA')) return 0.872 * 0.7;
+    else if (this.Ticker.endsWith('.L')) return 0.7;
+    else if (this.Ticker.endsWith('.MC')) return 0.81 * 0.7;
     else return 0.7; // at least belgian taxes
   }
 
@@ -90,13 +90,13 @@ class CurrencyHelper {
     for (let i = 0; i < positions.length; i++) {
       let position = positions[i];
 
-      if (position.Ticker.indexOf(".") < 0) position.Currency = "USD";
-      else if (position.Ticker.endsWith(".SW")) position.Currency = "CHF";
-      else if (position.Ticker.endsWith(".L")) position.Currency = "GBp";
-      else if (position.Ticker.endsWith(".OL")) position.Currency = "NOK";
-      else position.Currency = "EUR";
+      if (position.Ticker.indexOf('.') < 0) position.Currency = 'USD';
+      else if (position.Ticker.endsWith('.SW')) position.Currency = 'CHF';
+      else if (position.Ticker.endsWith('.L')) position.Currency = 'GBp';
+      else if (position.Ticker.endsWith('.OL')) position.Currency = 'NOK';
+      else position.Currency = 'EUR';
 
-      position.RateToEUR = await GetRate(position.Currency, "EUR");
+      position.RateToEUR = await GetRate(position.Currency, 'EUR');
     }
   }
 }
@@ -165,16 +165,17 @@ export class Portfolio {
         }
 
         switch (data.Type.toLowerCase()) {
-          case "buy":
+          case 'buy':
             item.NumberOfShares += data.Shares;
             item.MarketCost += data.Shares * data.Price + data.Commission;
             item.Transactions.push(data);
             break;
 
-          case "sell":
+          case 'sell':
             // calculate past gain with last transactions.
             while (data.Shares > 0) {
-              let lastTransaction = item.Transactions[item.Transactions.length - 1];
+              let lastTransaction =
+                item.Transactions[item.Transactions.length - 1];
               let x = Math.min(lastTransaction.Shares, data.Shares);
               item.MarketCost -=
                 x * lastTransaction.Price + lastTransaction.Commission;
@@ -187,7 +188,7 @@ export class Portfolio {
             }
             break;
 
-          case "deposit cash":
+          case 'deposit cash':
             item.PastGain += data.Commission;
             break;
 
@@ -206,7 +207,7 @@ export class Portfolio {
     let yahooData = await new YahooFinanceLoader().Load(tickers, [
       YahooFinanceFields.RegularMarketPrice,
       YahooFinanceFields.RegularMarketPreviousClose,
-      YahooFinanceFields.TrailingAnnualDividendRate,
+      YahooFinanceFields.TrailingAnnualDividendRate
     ]);
     result.forEach(
       (o) => (o.Security = yahooData.find((y) => y.symbol === o.Ticker))

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const Loading = () => (
   <div className="spinner bg-white dark:bg-gray-900 flex items-center justify-center p-8">

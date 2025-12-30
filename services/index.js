@@ -6,4 +6,6 @@
 // export { exchangeRateService } from './exchangeRate';
 // export { authService } from './auth';
 
-console.log('Services directory created. Add your API services here and export them from this index file.');
+console.log(
+  'Services directory created. Add your API services here and export them from this index file.'
+);

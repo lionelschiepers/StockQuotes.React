@@ -1,135 +1,125 @@
-div.stockName { 
-    text-align: left;
-  }
+div.stockName {
+  text-align: left;
+}
 
 /* Light mode - dark color instead of blue */
-a.stockName:link
-{
-    color:#333333;
+a.stockName:link {
+  color: #333333;
 }
 
-a.stockName:visited
-{
-    color:#333333;
+a.stockName:visited {
+  color: #333333;
 }
 
-a.stockName:hover
-{
-    color:#000000;
-    font-weight: bold;
+a.stockName:hover {
+  color: #000000;
+  font-weight: bold;
 }
 
-.oddRow
-{
-    background-color: whitesmoke;
+.oddRow {
+  background-color: whitesmoke;
 }
 
-.evenRow
-{
-    background-color: white;
+.evenRow {
+  background-color: white;
 }
 
 /* Dark mode styles */
-.dark a.stockName:link
-{
-    color: #ffffff;
+.dark a.stockName:link {
+  color: #ffffff;
 }
 
-.dark a.stockName:visited
-{
-    color: #ffffff;
+.dark a.stockName:visited {
+  color: #ffffff;
 }
 
-.dark a.stockName:hover
-{
-    color: #f1f5f9;
-    font-weight: bold;
+.dark a.stockName:hover {
+  color: #f1f5f9;
+  font-weight: bold;
 }
 
-.dark .oddRow
-{
-    background-color: #1e293b;
+.dark .oddRow {
+  background-color: #1e293b;
 }
 
-.dark .evenRow
-{
-    background-color: #334155;
+.dark .evenRow {
+  background-color: #334155;
 }
 
 /* Hide scrollbar for react-window List component and all its children */
 .react-window-list,
 .react-window-list > div,
 .react-window-list > div > div {
-    overflow: hidden !important;
-    scrollbar-width: none !important;  /* Firefox */
-    -ms-overflow-style: none !important;  /* IE and Edge */
+  overflow: hidden !important;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
 }
 
 /* Hide webkit scrollbars completely */
 .react-window-list::-webkit-scrollbar,
 .react-window-list > div::-webkit-scrollbar,
 .react-window-list > div > div::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-    background: transparent !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 /* Ensure no scrollbar appears in any browser */
 .react-window-list * {
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* Add space after the YahooFinance component */
 .yahoo-finance-container {
-    margin-left:10px;
-    margin-right:10px;
-    margin-bottom: 10px;
-    overflow-x: auto;
-    max-width: calc(100vw - 20px);
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  max-width: calc(100vw - 20px);
 }
 
 /* Responsive table wrapper */
 .yahoo-finance-table-wrapper {
-    overflow-x: auto;
-    min-width: 0;
-    -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Fix for text alignment and overflow in table cells */
 .yahoo-finance-container .react-window-list > div {
-    display: flex;
-    align-items: center;
-    min-height: 32px;
-    box-sizing: border-box;
-    min-width: max-content;
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  box-sizing: border-box;
+  min-width: max-content;
 }
 
 /* Ensure text doesn't get cut off */
 .yahoo-finance-container .react-window-list > div > div {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2;
-    padding: 2px 0;
-    min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  padding: 2px 0;
+  min-width: 0;
 }
 
 /* Specific fix for stock names to prevent text cutoff */
 .yahoo-finance-container .react-window-list > div > div:first-child {
-    padding: 2px 0 4px 0; /* Extra bottom padding for descenders */
+  padding: 2px 0 4px 0; /* Extra bottom padding for descenders */
 }
 
 /* Header row responsive styling */
 .yahoo-finance-container > div:nth-of-type(3) {
-    display: flex;
-    min-width: max-content;
-    overflow-x: auto;
+  display: flex;
+  min-width: max-content;
+  overflow-x: auto;
 }
 
 /* Ensure headers and rows align */
 .yahoo-finance-container > div:nth-of-type(3) > div,
 .yahoo-finance-container .react-window-list > div > div {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }

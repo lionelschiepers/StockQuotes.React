@@ -29,9 +29,9 @@ const SkeletonLoader = () => {
       {/* Table placeholder */}
       <div className="bg-gray-50 dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-600">
         <div className="h-8 mb-3 rounded bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse"></div>
-        {[1, 2, 3, 4, 5].map(i => (
-          <div 
-            key={i} 
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div
+            key={i}
             className="h-10 mb-2 rounded bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse"
             style={{ animationDelay: `${i * 0.1}s` }}
           ></div>

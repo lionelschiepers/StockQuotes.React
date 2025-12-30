@@ -1,5 +1,6 @@
 {
   "homepage": "https://lionelschiepers.github.io/ReactStockQuote/",
+  "type": "module",
   "name": "my-stock-quote",
   "version": "1.0.2",
   "private": true,
@@ -35,7 +36,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "build:proxy": "cd api && npm install --production && npm run build:production",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d out",

@@ -14,15 +14,15 @@ function chunk(array, size) {
 function getUrl(quotes, fields) {
   if (!Array.isArray(quotes)) quotes = [quotes];
 
-//  let url = process.env.REACT_APP_YAHOO_URL + "?symbols=" + quotes.join(",");
-  let url = process.env.NEXT_PUBLIC_YAHOO_URL + "?symbols=" + quotes.join(",");
+  //  let url = process.env.REACT_APP_YAHOO_URL + "?symbols=" + quotes.join(",");
+  let url = process.env.NEXT_PUBLIC_YAHOO_URL + '?symbols=' + quotes.join(',');
   if (fields == null) return url;
 
-  return url + "&fields=" + fields.join(",");
+  return url + '&fields=' + fields.join(',');
 }
 
 export const YahooFinanceFields = {
-    /*
+  /*
     Ask : 'ask',
     AskSize,
     AverageDailyVolume10Day,
@@ -31,8 +31,8 @@ export const YahooFinanceFields = {
     BidSize,
     BookValue,
     */
-    Currency : 'currency',
-    /*
+  Currency: 'currency',
+  /*
     DividendDate,
     EarningsTimestamp,
     EarningsTimestampEnd,
@@ -40,8 +40,8 @@ export const YahooFinanceFields = {
     EpsForward,
     EpsTrailingTwelveMonths,
     */
-    Exchange : 'exchange',
-    /*
+  Exchange: 'exchange',
+  /*
     ExchangeDataDelayedBy,
     ExchangeTimezoneName,
     ExchangeTimezoneShortName,
@@ -61,8 +61,8 @@ export const YahooFinanceFields = {
     Language,
     LongName,
     */
-    Market : 'market',
-    /*
+  Market: 'market',
+  /*
     MarketCap,
     MarketState,
     MessageBoardId,
@@ -75,10 +75,10 @@ export const YahooFinanceFields = {
     RegularMarketDayHigh,
     RegularMarketDayLow,
     */
-    RegularMarketOpen : 'regularMarketOpen',
-    RegularMarketPreviousClose : 'regularMarketPreviousClose',
-    RegularMarketPrice : 'regularMarketPrice',
-    /*
+  RegularMarketOpen: 'regularMarketOpen',
+  RegularMarketPreviousClose: 'regularMarketPreviousClose',
+  RegularMarketPrice: 'regularMarketPrice',
+  /*
     RegularMarketTime,
     RegularMarketVolume,
     PostMarketChange,
@@ -89,51 +89,45 @@ export const YahooFinanceFields = {
     ShortName,
     SourceInterval,
     */
-    Symbol : 'symbol',
-    /*
+  Symbol: 'symbol',
+  /*
     Tradeable,
     */
-    TrailingAnnualDividendRate : 'trailingAnnualDividendRate',
-    TrailingAnnualDividendYield : 'trailingAnnualDividendYield',
-    /*
+  TrailingAnnualDividendRate: 'trailingAnnualDividendRate',
+  TrailingAnnualDividendYield: 'trailingAnnualDividendYield'
+  /*
     TrailingPE,
     TwoHundredDayAverage,
     TwoHundredDayAverageChange,
     TwoHundredDayAverageChangePercent
     */
-  };
+};
 
-export class YahooFinanceLoader
-{ 
-  async Load(symbols, fields)
-  {
+export class YahooFinanceLoader {
+  async Load(symbols, fields) {
     const ttl = 300 * 1000;
-  
+
     const now = Date.now();
-    
+
     let result = [];
 
-    for(let i = symbols.length - 1; i >= 0; i--)
-    {
+    for (let i = symbols.length - 1; i >= 0; i--) {
       let symbol = symbols[i];
       let cacheItem = localStorage.getItem(symbol);
-      if (cacheItem != null)
-      {
+      if (cacheItem != null) {
         cacheItem = JSON.parse(cacheItem);
-        if ((now - cacheItem.Date) < ttl) // 5 minutes
+        if (now - cacheItem.Date < ttl) // 5 minutes
         {
           result.push(cacheItem);
           symbols.splice(i, 1);
-        }
-        else
-        {
+        } else {
           localStorage.removeItem(symbol);
         }
       }
     }
 
     let chunks = chunk(symbols, 50);
-    let urls= [];
+    let urls = [];
     chunks.forEach((item, index, array) => {
       let url = getUrl(chunks[index], fields);
       urls.push(axios.get(url));

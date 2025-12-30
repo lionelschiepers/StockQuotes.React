@@ -1,4 +1,4 @@
-import YahooFinance from "./YahooFinance";
+import YahooFinance from './YahooFinance';
 
 const Content = () => {
   return <YahooFinance />;
