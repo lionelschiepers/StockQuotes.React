@@ -292,7 +292,7 @@ const YahooFinance = () => {
       portfolio: portfolioProp,
       displayInEUR: displayEUR
     }) {
-      if (typeof portfolioProp === 'undefined' || index >= portfolioProp.length)
+      if (portfolioProp === undefined || index >= portfolioProp.length)
         return null;
 
       const item = portfolioProp[index];
@@ -309,7 +309,7 @@ const YahooFinance = () => {
       return (
         <div
           style={{
-            ...(style || {}),
+            ...style,
             display: 'flex',
             alignItems: 'center',
             minWidth: 'max-content'
