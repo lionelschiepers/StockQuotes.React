@@ -3,7 +3,8 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
-  basePath: process.env.PAGES_BASE_PATH || ''
+  basePath: process.env.PAGES_BASE_PATH || '',
+  productionBrowserSourceMaps: true
 };
 
 export default nextConfig;
