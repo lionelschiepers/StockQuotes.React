@@ -19,7 +19,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # prefer npm ci when a lockfile exists (faster, deterministic)
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+RUN if [ -f package-lock.json ]; then npm ci --ignore-scripts; else npm install --ignore-scripts; fi
 # RUN npm audit fix
 
 COPY . .
