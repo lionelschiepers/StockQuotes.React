@@ -448,15 +448,15 @@ const YahooFinance = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="text-gray-900 dark:text-white">
-              Market Price:&nbsp;
+              Market Price:&nbsp;{/* prettier-ignore */}
               <span className="font-semibold">{formatInKEur(marketPrice)}</span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Market Cost:&nbsp;
+              Market Cost:&nbsp;{/* prettier-ignore */}
               <span className="font-semibold">{formatInKEur(marketCost)}</span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Total Gain:&nbsp;
+              Total Gain:&nbsp;{/* prettier-ignore */}
               <span className="font-semibold">
                 {(gain * 100).toLocaleString('fr-FR', {
                   minimumFractionDigits: 2,
@@ -466,7 +466,7 @@ const YahooFinance = () => {
               </span>
             </div>
             <div className="text-gray-900 dark:text-white">
-              Day diff:&nbsp;
+              Day diff:&nbsp;{/* prettier-ignore */}
               <span className="font-semibold">
                 {(dayDiff * 100).toLocaleString('fr-FR', {
                   minimumFractionDigits: 2,
@@ -476,10 +476,12 @@ const YahooFinance = () => {
               </span>
             </div>
             <div className="text-gray-900 dark:text-white">
+              {/* prettier-ignore */}
               Past Gain:&nbsp;
               <span className="font-semibold">{formatInKEur(pastGain)}</span>
             </div>
             <div className="text-gray-900 dark:text-white">
+              {/* prettier-ignore */}
               Dividend Yield:&nbsp;
               <span className="font-semibold">
                 {dividendYield.toLocaleString('fr-FR', {
@@ -488,11 +490,11 @@ const YahooFinance = () => {
                 })}
                 %
               </span>
-              (
+              ({/* prettier-ignore */}
               <span className="font-semibold">
                 {formatInKEur(dividendRate)}
               </span>
-              )
+              {/* prettier-ignore */})
             </div>
           </div>
           <div className="text-right">
