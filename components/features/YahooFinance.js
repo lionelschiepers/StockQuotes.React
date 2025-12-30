@@ -384,6 +384,12 @@ const YahooFinance = () => {
     [sortBy, sortDirection]
   );
 
+  const handleKeyDown = (onClick) => (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      onClick();
+    }
+  };
+
   // Create sort handler for each column
   const createSortHandler = useCallback(
     (field) => {
@@ -468,6 +474,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 350px', minWidth: '200px' }}
             onClick={createSortHandler('Name')}
+            onKeyDown={handleKeyDown(createSortHandler('Name'))}
+            role="button"
+            tabIndex={0}
           >
             Name {getSortIndicator('Name')}
           </div>
@@ -475,6 +484,11 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 110px', minWidth: '70px' }}
             onClick={createSortHandler('Security.regularMarketPrice')}
+            onKeyDown={handleKeyDown(
+              createSortHandler('Security.regularMarketPrice')
+            )}
+            role="button"
+            tabIndex={0}
           >
             Price {getSortIndicator('Security.regularMarketPrice')}
           </div>
@@ -482,6 +496,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 80px', minWidth: '70px' }}
             onClick={createSortHandler('Diff')}
+            onKeyDown={handleKeyDown(createSortHandler('Diff'))}
+            role="button"
+            tabIndex={0}
           >
             Diff {getSortIndicator('Diff')}
           </div>
@@ -489,6 +506,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 80px', minWidth: '70px' }}
             onClick={createSortHandler('NumberOfShares')}
+            onKeyDown={handleKeyDown(createSortHandler('NumberOfShares'))}
+            role="button"
+            tabIndex={0}
           >
             Shares {getSortIndicator('NumberOfShares')}
           </div>
@@ -496,6 +516,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 120px', minWidth: '100px' }}
             onClick={createSortHandler('MarketCost')}
+            onKeyDown={handleKeyDown(createSortHandler('MarketCost'))}
+            role="button"
+            tabIndex={0}
           >
             Market Cost {getSortIndicator('MarketCost')}
           </div>
@@ -503,6 +526,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 130px', minWidth: '100px' }}
             onClick={createSortHandler('MarketPrice')}
+            onKeyDown={handleKeyDown(createSortHandler('MarketPrice'))}
+            role="button"
+            tabIndex={0}
           >
             Market Price {getSortIndicator('MarketPrice')}
           </div>
@@ -510,6 +536,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 90px', minWidth: '90px' }}
             onClick={createSortHandler('Gain')}
+            onKeyDown={handleKeyDown(createSortHandler('Gain'))}
+            role="button"
+            tabIndex={0}
           >
             Gain {getSortIndicator('Gain')}
           </div>
@@ -517,6 +546,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 90px', minWidth: '90px' }}
             onClick={createSortHandler('GainPercent')}
+            onKeyDown={handleKeyDown(createSortHandler('GainPercent'))}
+            role="button"
+            tabIndex={0}
           >
             Gain % {getSortIndicator('GainPercent')}
           </div>
@@ -524,6 +556,9 @@ const YahooFinance = () => {
             className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
             style={{ flex: '0 0 120px', minWidth: '100px' }}
             onClick={createSortHandler('PastGain')}
+            onKeyDown={handleKeyDown(createSortHandler('PastGain'))}
+            role="button"
+            tabIndex={0}
           >
             Past Gain {getSortIndicator('PastGain')}
           </div>
