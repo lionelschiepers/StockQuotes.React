@@ -87,9 +87,7 @@ class SecurityPostion {
 class CurrencyHelper {
   // sets currency of positions using market.
   static async updateCurrency(positions) {
-    for (let i = 0; i < positions.length; i++) {
-      let position = positions[i];
-
+    for (const position of positions) {
       if (position.Ticker.indexOf('.') < 0) position.Currency = 'USD';
       else if (position.Ticker.endsWith('.SW')) position.Currency = 'CHF';
       else if (position.Ticker.endsWith('.L')) position.Currency = 'GBp';
