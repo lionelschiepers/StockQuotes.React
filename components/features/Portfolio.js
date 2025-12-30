@@ -20,7 +20,7 @@ class SecurityPostion {
   Security; // price of one share
 
   getTaxeRate() {
-    if (this.Ticker.indexOf('.') < 0) return 0.85 * 0.7;
+    if (!this.Ticker.includes('.')) return 0.85 * 0.7;
     else if (this.Ticker.endsWith('.BR')) return 0.7;
     else if (this.Ticker.endsWith('.VX')) return 0.65 * 0.7;
     else if (this.Ticker.endsWith('.ST')) return 0.7 * 0.7;
@@ -88,7 +88,7 @@ class CurrencyHelper {
   // sets currency of positions using market.
   static async updateCurrency(positions) {
     for (const position of positions) {
-      if (position.Ticker.indexOf('.') < 0) position.Currency = 'USD';
+      if (!position.Ticker.includes('.')) position.Currency = 'USD';
       else if (position.Ticker.endsWith('.SW')) position.Currency = 'CHF';
       else if (position.Ticker.endsWith('.L')) position.Currency = 'GBp';
       else if (position.Ticker.endsWith('.OL')) position.Currency = 'NOK';
