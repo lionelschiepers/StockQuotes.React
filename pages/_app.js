@@ -17,6 +17,7 @@ const providerConfig = {
   }
 };
 
+import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 function MyApp({ Component, pageProps }) {
@@ -49,6 +50,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <Auth0Provider {...providerConfig}>
+      <Head>
+        <title>Stock Portfolio</title>
+      </Head>
       <div
         id="app"
         className="flex flex-col min-h-screen bg-white dark:bg-gray-900"
