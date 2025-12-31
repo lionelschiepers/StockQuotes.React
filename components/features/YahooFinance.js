@@ -182,47 +182,33 @@ const YahooFinance = () => {
     );
   }, []);
 
-  // Price rendering function
-  const renderPrice = useCallback(
-    (cellData, dataKey, rowData) => {
-      if (Number.isNaN(cellData)) return <div />;
+  // Helper function to calculate cell data and post data
+  const calculateCellDataAndPostData = useCallback(
+    (initialCellData, dataKey, rowData) => {
+      let cellData = initialCellData;
       let postData = '';
 
       if (
         dataKey === 'Security.regularMarketPrice' &&
-        rowData.Security != null
+        rowData.Security != null &&
+        cellData != null
       ) {
-        if (cellData != null) postData = rowData.Currency;
-      }
-
-      if (dataKey === 'NumberOfShares') {
-        return <div>{cellData == null ? '' : cellData.toFixed(0)}</div>;
-      }
-
-      if (dataKey === 'Diff') {
-        let price =
-          rowData.Security == null ? null : rowData.Security.regularMarketPrice;
-        let previousPrice =
-          rowData.Security == null
-            ? null
-            : rowData.Security.regularMarketPreviousClose;
-        if (price == null || previousPrice == null) return <div />;
-
+        postData = rowData.Currency;
+      } else if (dataKey === 'Diff') {
+        const price = rowData.Security?.regularMarketPrice;
+        const previousPrice = rowData.Security?.regularMarketPreviousClose;
+        if (price == null || previousPrice == null) {
+          return { cellData: NaN, postData: '' };
+        }
         cellData = 100 * (price / previousPrice - 1);
         postData = '%';
-      }
-
-      if (dataKey === 'GainPercent') {
+      } else if (dataKey === 'GainPercent') {
         postData = '%';
-      }
-
-      if (dataKey === 'MarketCost' && displayInEUR) {
+      } else if (dataKey === 'MarketCost' && displayInEUR) {
         cellData = rowData.MarketCostEUR;
-      }
-      if (dataKey === 'MarketPrice' && displayInEUR) {
+      } else if (dataKey === 'MarketPrice' && displayInEUR) {
         cellData = rowData.MarketPriceEUR;
-      }
-      if (dataKey === 'PastGain' && displayInEUR) {
+      } else if (dataKey === 'PastGain' && displayInEUR) {
         cellData = rowData.PastGainEUR;
       }
 
@@ -233,25 +219,52 @@ const YahooFinance = () => {
         cellData = null;
       }
 
-      // Format Market Cost, Market Price and Gain columns with separators but no decimals
-      const shouldRemoveDecimals =
-        dataKey === 'MarketCost' ||
-        dataKey === 'MarketPrice' ||
-        dataKey === 'Gain';
+      return { cellData, postData };
+    },
+    [displayInEUR]
+  );
 
-      let displayValue = '';
-      if (cellData != null) {
-        if (shouldRemoveDecimals) {
-          // Use toLocaleString to add separators, then remove any decimal part
-          displayValue = Math.round(cellData).toLocaleString('fr-FR');
-        } else {
-          // Format with French locale, showing up to 2 decimal places, but no minimum
-          displayValue = cellData.toLocaleString('fr-FR', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-          });
-        }
+  // Helper function to format display value
+  const formatDisplayValue = useCallback((value, dataKey) => {
+    if (value == null) return '';
+
+    const shouldRemoveDecimals =
+      dataKey === 'MarketCost' ||
+      dataKey === 'MarketPrice' ||
+      dataKey === 'Gain';
+
+    if (shouldRemoveDecimals) {
+      return Math.round(value).toLocaleString('fr-FR');
+    } else {
+      return value.toLocaleString('fr-FR', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+      });
+    }
+  }, []);
+
+  // Price rendering function
+  const renderPrice = useCallback(
+    (initialCellData, dataKey, rowData) => {
+      if (Number.isNaN(initialCellData)) return <div />;
+
+      // Handle NumberOfShares early as it has a distinct rendering format
+      if (dataKey === 'NumberOfShares') {
+        return (
+          <div>{initialCellData == null ? '' : initialCellData.toFixed(0)}</div>
+        );
       }
+
+      const { cellData, postData } = calculateCellDataAndPostData(
+        initialCellData,
+        dataKey,
+        rowData,
+        displayInEUR
+      );
+
+      if (Number.isNaN(cellData)) return <div />; // If calculation resulted in NaN (e.g., price data missing for 'Diff')
+
+      const displayValue = formatDisplayValue(cellData, dataKey);
 
       return (
         <div>
@@ -259,7 +272,7 @@ const YahooFinance = () => {
         </div>
       );
     },
-    [displayInEUR]
+    [displayInEUR, calculateCellDataAndPostData, formatDisplayValue]
   );
 
   // Name rendering function
