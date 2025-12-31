@@ -198,7 +198,7 @@ const YahooFinance = () => {
         const price = rowData.Security?.regularMarketPrice;
         const previousPrice = rowData.Security?.regularMarketPreviousClose;
         if (price == null || previousPrice == null) {
-          return { cellData: NaN, postData: '' };
+          return { cellData: Number.NaN, postData: '' };
         }
         cellData = 100 * (price / previousPrice - 1);
         postData = '%';
