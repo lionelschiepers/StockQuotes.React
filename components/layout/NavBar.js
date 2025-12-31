@@ -12,7 +12,7 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
 
   const logoutWithRedirect = () =>
     logout({
-      returnTo: window.location.origin
+      returnTo: globalThis.window.location.origin
     });
 
   return (
