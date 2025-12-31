@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: 
       - main
-      
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -65,6 +65,9 @@ jobs:
         run: npm run build
         env:
           PAGES_BASE_PATH: ${{ steps.setup_pages.outputs.base_path }}
+
+      - name: Build with Next.js
+        run: npm run test
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
