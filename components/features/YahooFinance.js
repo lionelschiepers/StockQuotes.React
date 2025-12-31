@@ -82,82 +82,79 @@ const YahooFinance = () => {
   }, [isAuthenticated, user]);
 
   // Sort functionality
+  const getSortValue = useCallback(
+    (item, sortByField) => {
+      switch (sortByField) {
+        case 'Security.regularMarketPrice':
+          return item.Security?.regularMarketPrice || 0;
+        case 'Diff':
+          return item.getDayDiff();
+        case 'GainPercent':
+          return item.getGainDiff();
+        case 'Gain':
+          return item.getGain(displayInEUR);
+        default:
+          return item[sortByField];
+      }
+    },
+    [displayInEUR]
+  );
+
   const internalSort = useCallback(
     (list, sortByField, direction) => {
-      let orderedList = [...list].sort((a, b) => {
-        // For Name sorting, don't apply special handling for zero shares
+      const sortedList = [...list].sort((a, b) => {
+        // Special handling for 'Name' field (no zero shares consideration)
         if (sortByField === 'Name') {
           const aName = a.Name.toLowerCase();
           const bName = b.Name.toLowerCase();
-          return aName.localeCompare(bName);
+          return direction === 'ASC'
+            ? aName.localeCompare(bName)
+            : bName.localeCompare(aName);
         }
 
-        // For all other fields, put zero shares at the end
-        if (a.NumberOfShares === 0 && sortByField !== 'Name') {
-          return direction === 'DESC' ? -Infinity : Infinity;
+        // Handle positions with zero shares: they should always appear at the end
+        const aHasZeroShares = a.NumberOfShares === 0;
+        const bHasZeroShares = b.NumberOfShares === 0;
+
+        if (aHasZeroShares && !bHasZeroShares) {
+          return 1; // 'a' (zero shares) goes after 'b'
         }
-        if (b.NumberOfShares === 0 && sortByField !== 'Name') {
-          return direction === 'DESC' ? Infinity : -Infinity;
+        if (!aHasZeroShares && bHasZeroShares) {
+          return -1; // 'a' goes before 'b' (zero shares)
+        }
+        if (aHasZeroShares && bHasZeroShares) {
+          // If both have zero shares, sort them by name for stable ordering among themselves
+          const aName = a.Name.toLowerCase();
+          const bName = b.Name.toLowerCase();
+          return direction === 'ASC'
+            ? aName.localeCompare(bName)
+            : bName.localeCompare(aName);
         }
 
-        let aValue, bValue;
+        // Get comparison values using the helper
+        let aValue = getSortValue(a, sortByField, displayInEUR);
+        let bValue = getSortValue(b, sortByField, displayInEUR);
 
-        if (sortByField === 'Security.regularMarketPrice') {
-          aValue = a.Security?.regularMarketPrice || 0;
-          bValue = b.Security?.regularMarketPrice || 0;
-        } else if (sortByField === 'Diff') {
-          aValue = a.getDayDiff();
-          bValue = b.getDayDiff();
-
-          if (a.NumberOfShares === 0) aValue = null;
-          if (b.NumberOfShares === 0) bValue = null;
-
-          if (aValue == null && direction === 'DESC') {
-            aValue = -100000000; // always at the bottom
-          }
-          if (bValue == null && direction === 'DESC') {
-            bValue = -100000000; // always at the bottom
-          }
-        } else if (sortByField === 'GainPercent') {
-          aValue = a.getGainDiff();
-          bValue = b.getGainDiff();
-
-          if (a.NumberOfShares === 0) aValue = null;
-          if (b.NumberOfShares === 0) bValue = null;
-
-          if (aValue == null && direction === 'DESC') {
-            aValue = -100000000; // always at the bottom
-          }
-          if (bValue == null && direction === 'DESC') {
-            bValue = -100000000; // always at the bottom
-          }
-        } else if (sortByField === 'Gain') {
-          aValue = a.getGain(displayInEUR);
-          bValue = b.getGain(displayInEUR);
-        } else {
-          aValue = a[sortByField];
-          bValue = b[sortByField];
-        }
+        // Handle potential null/undefined values after getSortValue
+        // Null/undefined values should go to the end
+        if (aValue == null && bValue == null) return 0;
+        if (aValue == null) return 1; // a is null, goes after b
+        if (bValue == null) return -1; // b is null, goes after a
 
         // Handle string comparisons
         if (typeof aValue === 'string' && typeof bValue === 'string') {
-          return aValue.toLowerCase().localeCompare(bValue.toLowerCase());
+          return direction === 'ASC'
+            ? aValue.toLowerCase().localeCompare(bValue.toLowerCase())
+            : bValue.toLowerCase().localeCompare(aValue.toLowerCase());
         }
 
-        // Handle null values
-        if (aValue == null && bValue == null) return 0;
-        if (aValue == null) return direction === 'DESC' ? 1 : -1;
-        if (bValue == null) return direction === 'DESC' ? -1 : 1;
-
-        return aValue - bValue;
+        // Numeric comparison
+        return direction === 'ASC' ? aValue - bValue : bValue - aValue;
       });
 
-      if (direction === 'DESC') {
-        orderedList = orderedList.reverse();
-      }
-      return orderedList;
+      return sortedList;
     },
-    [displayInEUR]
+    [displayInEUR, getSortValue]
   );
 
   const handleSort = useCallback(
