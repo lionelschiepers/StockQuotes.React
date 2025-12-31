@@ -31,7 +31,7 @@ describe('Content', () => {
 
     jest.useFakeTimers();
 
-    const { container } = render(<Content />);
+    render(<Content />);
 
     // Initially, the skeleton loader should be visible
     expect(screen.getByText('Loading portfolio data')).toBeInTheDocument();
