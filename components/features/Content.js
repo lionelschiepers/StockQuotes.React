@@ -1,3 +1,4 @@
+import React from 'react';
 import YahooFinance from './YahooFinance';
 
 const Content = () => {
