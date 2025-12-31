@@ -14,7 +14,9 @@ const providerConfig = {
   ...(config.audience ? { audience: config.audience } : null),
   authorizationParams: {
     redirect_uri:
-      typeof window === 'object' ? globalThis.window.location.origin : ''
+      typeof globalThis.window === 'object'
+        ? globalThis.window.location.origin
+        : ''
   }
 };
 
