@@ -1,16 +1,19 @@
 {
   "homepage": "https://lionelschiepers.github.io/ReactStockQuote/",
-  "type": "module",
   "name": "my-stock-quote",
   "version": "1.0.2",
   "private": true,
   "devDependencies": {
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.1",
     "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
     "lint-staged": "^16.2.7",
     "postcss": "^8.5.0",
     "prettier": "^3.7.4"
@@ -36,6 +39,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "jest",
     "lint": "eslint .",
     "build:proxy": "cd api && npm install --production && npm run build:production",
     "predeploy": "npm run build",
