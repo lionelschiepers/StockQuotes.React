@@ -102,53 +102,45 @@ const YahooFinance = () => {
 
   const internalSort = useCallback(
     (list, sortByField, direction) => {
-      const sortedList = [...list].sort((a, b) => {
-        // Special handling for 'Name' field (no zero shares consideration)
-        if (sortByField === 'Name') {
-          const aName = a.Name.toLowerCase();
-          const bName = b.Name.toLowerCase();
-          return direction === 'ASC'
-            ? aName.localeCompare(bName)
-            : bName.localeCompare(aName);
-        }
+      const compareNames = (a, b) => {
+        const aName = a.Name.toLowerCase();
+        const bName = b.Name.toLowerCase();
+        return direction === 'ASC'
+          ? aName.localeCompare(bName)
+          : bName.localeCompare(aName);
+      };
 
-        // Handle positions with zero shares: they should always appear at the end
+      const handleZeroShares = (a, b) => {
         const aHasZeroShares = a.NumberOfShares === 0;
         const bHasZeroShares = b.NumberOfShares === 0;
 
-        if (aHasZeroShares && !bHasZeroShares) {
-          return 1; // 'a' (zero shares) goes after 'b'
-        }
-        if (!aHasZeroShares && bHasZeroShares) {
-          return -1; // 'a' goes before 'b' (zero shares)
-        }
-        if (aHasZeroShares && bHasZeroShares) {
-          // If both have zero shares, sort them by name for stable ordering among themselves
-          const aName = a.Name.toLowerCase();
-          const bName = b.Name.toLowerCase();
-          return direction === 'ASC'
-            ? aName.localeCompare(bName)
-            : bName.localeCompare(aName);
+        if (aHasZeroShares && !bHasZeroShares) return 1;
+        if (!aHasZeroShares && bHasZeroShares) return -1;
+        if (aHasZeroShares && bHasZeroShares) return compareNames(a, b);
+        return null;
+      };
+
+      const sortedList = [...list].sort((a, b) => {
+        if (sortByField === 'Name') {
+          return compareNames(a, b);
         }
 
-        // Get comparison values using the helper
-        let aValue = getSortValue(a, sortByField, displayInEUR);
-        let bValue = getSortValue(b, sortByField, displayInEUR);
+        const zeroSharesResult = handleZeroShares(a, b);
+        if (zeroSharesResult !== null) return zeroSharesResult;
 
-        // Handle potential null/undefined values after getSortValue
-        // Null/undefined values should go to the end
+        const aValue = getSortValue(a, sortByField, displayInEUR);
+        const bValue = getSortValue(b, sortByField, displayInEUR);
+
         if (aValue == null && bValue == null) return 0;
-        if (aValue == null) return 1; // a is null, goes after b
-        if (bValue == null) return -1; // b is null, goes after a
+        if (aValue == null) return 1;
+        if (bValue == null) return -1;
 
-        // Handle string comparisons
         if (typeof aValue === 'string' && typeof bValue === 'string') {
           return direction === 'ASC'
             ? aValue.toLowerCase().localeCompare(bValue.toLowerCase())
             : bValue.toLowerCase().localeCompare(aValue.toLowerCase());
         }
 
-        // Numeric comparison
         return direction === 'ASC' ? aValue - bValue : bValue - aValue;
       });
 
