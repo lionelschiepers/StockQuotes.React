@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/global.css';
 import '../styles/YahooFinance.css';
 
 import { Auth0Provider } from '@auth0/auth0-react';
 import { getConfig } from '../lib/config/config';
 import NavBar from '../components/layout/NavBar';
-import { useState, useEffect } from 'react';
 
 const config = getConfig();
 
