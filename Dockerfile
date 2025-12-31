@@ -11,7 +11,7 @@ ENV NEXT_PUBLIC_AUTH0_CLIENT_ID=IRO3ziJRgAvy03EjWdXpvrUgkdh9ameo
 # ENV REACT_APP_YAHOO_URL=https://stockquote-api.lionelschiepers.synology.me/api/yahoo-finance
 # ENV REACT_APP_EXCHANGE_RATES_URL=https://stockquote-api.lionelschiepers.synology.me/api/exchange-rate-ecb
 
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 
 WORKDIR /app
 
