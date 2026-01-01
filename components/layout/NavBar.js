@@ -33,17 +33,11 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
                   viewBox="0 0 512 512"
                   data-iconid="483083"
                   data-svgname="Stock market"
-                  className="mr-2"
+                  className="mr-2 fill-current dark:text-white"
                 >
                   <g>
-                    <polygon
-                      style={{ fill: '#FFFFFF' }}
-                      points="204.344,155.188 249.469,200.297 409.344,40.422 268.031,40.422 316.063,88.453 249.469,155.031 204.953,110.516 41.906,264.969 63.906,288.219"
-                    ></polygon>
-                    <polygon
-                      style={{ fill: '#FFFFFF' }}
-                      points="512,102.313 276.031,330.281 212.656,266.906 0,471.578 512,471.578"
-                    ></polygon>
+                    <polygon points="204.344,155.188 249.469,200.297 409.344,40.422 268.031,40.422 316.063,88.453 249.469,155.031 204.953,110.516 41.906,264.969 63.906,288.219"></polygon>
+                    <polygon points="512,102.313 276.031,330.281 212.656,266.906 0,471.578 512,471.578"></polygon>
                   </g>
                 </svg>
                 Stock Quotes
