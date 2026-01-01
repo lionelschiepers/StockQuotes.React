@@ -36,3 +36,12 @@ To build and run the backend API, you will need to have Node.js and the Azure Fu
 *   The project uses GitHub Actions for continuous integration and deployment.
 *   The frontend is deployed to GitHub Pages.
 *   The API is deployed to Azure Functions.
+
+# Rules
+- The project is scanned with sonarqube
+- The application is developped on windows os
+- Validate every fix with npm run lint
+- Validate every fix with npm run format
+- Validate every fix with npm run build
+- don't execute 'npm run dev' for testing
+- don't automatically push commit with the changes
