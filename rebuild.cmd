@@ -1,5 +1,6 @@
 rd /s /q node_modules
 rd /s /q .next
+rd /s /q out
 del package-lock.json
 cmd /c npm.cmd i
 cmd /c npm.cmd outdated
