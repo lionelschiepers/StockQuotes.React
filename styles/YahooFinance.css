@@ -79,3 +79,20 @@ div.stockName {
 .yahoo-finance-container .react-window-list > div > div {
   flex-shrink: 0;
 }
+
+/* Alternating row backgrounds */
+.evenRow {
+  background-color: #ffffff; /* White */
+}
+
+.oddRow {
+  background-color: #f8f8f8; /* Light grey */
+}
+
+.dark .evenRow {
+  background-color: #1a202c; /* Even darker grey for dark mode even rows */
+}
+
+.dark .oddRow {
+  background-color: #2d3748; /* Darker grey for dark mode odd rows */
+}
