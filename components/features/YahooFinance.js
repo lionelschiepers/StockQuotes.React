@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from './Portfolio';
 import { CSVLink } from 'react-csv';
 import SkeletonLoader from '../ui/SkeletonLoader';
-import PropTypes from 'prop-types';
+
 import YahooFinanceRow from './YahooFinanceRow';
 
 const YahooFinance = () => {
