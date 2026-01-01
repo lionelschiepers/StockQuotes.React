@@ -28,7 +28,7 @@ const mockEvaluate = jest.fn((xpath, document, namespaceResolver, type, result) 
   };
 });
 
-global.DOMParser = jest.fn(() => ({
+globalThis.DOMParser = jest.fn(() => ({
   parseFromString: jest.fn(() => ({
     documentElement: {}, // Mock documentElement, might not be used directly in GetRate but good to have
     evaluate: mockEvaluate,
@@ -66,7 +66,7 @@ describe('GetRate', () => {
     expect(rate).toBeCloseTo(1 / 1.1000);
     expect(axios.get).toHaveBeenCalledTimes(1);
     expect(axios.get).toHaveBeenCalledWith('http://test.url');
-    expect(global.DOMParser).toHaveBeenCalledTimes(1);
+    expect(globalThis.DOMParser).toHaveBeenCalledTimes(1);
     expect(mockEvaluate).toHaveBeenCalledTimes(1);
   });
 
@@ -84,7 +84,7 @@ describe('GetRate', () => {
     await GetRate('USD', 'EUR'); 
 
     expect(axios.get).toHaveBeenCalledTimes(1); // axios.get should only be called once
-    expect(global.DOMParser).toHaveBeenCalledTimes(1); // DOMParser should only be called once
+    expect(globalThis.DOMParser).toHaveBeenCalledTimes(1); // DOMParser should only be called once
     expect(mockEvaluate).toHaveBeenCalledTimes(1); // evaluate should only be called once
   });
 
@@ -102,7 +102,7 @@ describe('GetRate', () => {
     expect(rateEURToGBp).toBeCloseTo(0.8800 * 100);
 
     expect(axios.get).toHaveBeenCalledTimes(1); // Should still only call get once due to caching
-    expect(global.DOMParser).toHaveBeenCalledTimes(1);
+    expect(globalThis.DOMParser).toHaveBeenCalledTimes(1);
     expect(mockEvaluate).toHaveBeenCalledTimes(1);
   });
 
@@ -114,7 +114,7 @@ describe('GetRate', () => {
       'Failed to load the exchange rates from http://test.url'
     );
     expect(axios.get).toHaveBeenCalledTimes(1);
-    expect(global.DOMParser).not.toHaveBeenCalled(); // DOMParser should not be called if axios fails
+    expect(globalThis.DOMParser).not.toHaveBeenCalled(); // DOMParser should not be called if axios fails
     expect(mockEvaluate).not.toHaveBeenCalled(); // evaluate should not be called if axios fails
   });
 
@@ -128,7 +128,7 @@ describe('GetRate', () => {
       'Failed to retrieve a rate for XYZ'
     );
     expect(axios.get).toHaveBeenCalledTimes(1);
-    expect(global.DOMParser).toHaveBeenCalledTimes(1);
+    expect(globalThis.DOMParser).toHaveBeenCalledTimes(1);
     expect(mockEvaluate).toHaveBeenCalledTimes(1);
   });
 
@@ -142,7 +142,7 @@ describe('GetRate', () => {
       'Failed to retrieve a rate for XYZ'
     );
     expect(axios.get).toHaveBeenCalledTimes(1);
-    expect(global.DOMParser).toHaveBeenCalledTimes(1);
+    expect(globalThis.DOMParser).toHaveBeenCalledTimes(1);
     expect(mockEvaluate).toHaveBeenCalledTimes(1);
   });
 });
