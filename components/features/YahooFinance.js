@@ -365,13 +365,12 @@ const YahooFinance = () => {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
-                %
               </span>
-              ({/* prettier-ignore */}
+              <span> (</span>
               <span className="font-semibold">
                 {formatInKEur(dividendRate)}
               </span>
-              {/* prettier-ignore */})
+              <span>)</span>
             </div>
           </div>
           <div className="text-right">
