@@ -32,7 +32,13 @@ const YahooFinanceRow = React.memo(
           alignItems: 'center',
           minWidth: 'max-content'
         }}
-        className={index % 2 === 0 ? 'evenRow' : 'oddRow'}
+        className={`
+          ${
+            index % 2 === 0
+              ? 'bg-white dark:bg-gray-900'
+              : 'bg-gray-50 dark:bg-gray-800'
+          } hover:bg-gray-100 dark:hover:bg-gray-700
+        `}
       >
         <div
           style={{ flex: '0 0 350px', minWidth: '200px', padding: '6px 5px' }}
