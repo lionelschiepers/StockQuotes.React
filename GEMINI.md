@@ -44,4 +44,4 @@ To build and run the backend API, you will need to have Node.js and the Azure Fu
 - Validate every fix with npm run format
 - Validate every fix with npm run build
 - don't execute 'npm run dev' for testing
-- don't automatically push commit with the changes
+- don't automatically update git
