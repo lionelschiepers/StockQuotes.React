@@ -79,3 +79,5 @@ div.stockName {
 .yahoo-finance-container .react-window-list > div > div {
   flex-shrink: 0;
 }
+
+/* Alternating row backgrounds */

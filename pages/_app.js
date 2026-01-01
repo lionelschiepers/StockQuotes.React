@@ -23,8 +23,19 @@ const providerConfig = {
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
+const getInitialTheme = () => {
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      return savedTheme === 'dark';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  return false;
+};
+
 function MyApp({ Component, pageProps }) {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(getInitialTheme);
 
   // Apply dark mode class and save preference when the state changes
   useEffect(() => {
