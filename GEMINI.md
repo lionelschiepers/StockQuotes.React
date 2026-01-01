@@ -45,3 +45,4 @@ To build and run the backend API, you will need to have Node.js and the Azure Fu
 - Validate every fix with npm run build
 - don't execute 'npm run dev' for testing
 - don't automatically update git
+- dark mode is managed by tailwindcss (using @custom-variant dark in global.css)
