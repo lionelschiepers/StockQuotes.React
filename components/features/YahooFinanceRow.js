@@ -37,7 +37,7 @@ const YahooFinanceRow = React.memo(
             index % 2 === 0
               ? 'bg-white dark:bg-gray-900'
               : 'bg-gray-50 dark:bg-gray-800'
-          } hover:bg-gray-100 dark:hover:bg-gray-700
+          } hover:bg-gray-200 dark:hover:bg-gray-600
         `}
       >
         <div
