@@ -3,7 +3,7 @@ import axios from 'axios';
 import { GetRate } from './ExchangeRates';
 import { YahooFinanceLoader, YahooFinanceFields } from './YahooFinanceLoader';
 
-class SecurityPostion {
+export class SecurityPostion {
   Ticker;
   Market;
   NumberOfShares = 0;
@@ -71,7 +71,7 @@ class SecurityPostion {
 
     let gain = (price - previousPrice) * this.NumberOfShares;
 
-    return inEUR === false ? gain : gain * this.RateToEUR;
+    return inEUR ? gain * this.RateToEUR : gain;
   }
 
   getDayDiff() {
@@ -84,7 +84,7 @@ class SecurityPostion {
   }
 }
 
-class CurrencyHelper {
+export class CurrencyHelper {
   // sets currency of positions using market.
   static async updateCurrency(positions) {
     for (const position of positions) {

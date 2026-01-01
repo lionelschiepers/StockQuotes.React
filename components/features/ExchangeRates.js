@@ -9,40 +9,45 @@ export async function GetRate(from, to) {
   const url = process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL;
 
   if (Cache.Rates == null) {
-    await axios.get(url).then((res) => {
-      let parser = new DOMParser();
-      let doc = parser.parseFromString(res.data, 'text/xml');
+    try {
+      await axios.get(url).then((res) => {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(res.data, 'text/xml');
 
-      let nodes = doc.evaluate(
-        "/gesmes:Envelope/*[name()='Cube']/*[name()='Cube']/*[name()='Cube']",
-        doc.documentElement,
-        doc.documentElement,
-        XPathResult.ANY_TYPE,
-        null
-      );
-      let result = [];
-      let node;
-      while ((node = nodes.iterateNext()) != null) {
-        let currency = node.getAttribute('currency');
-        let rate = node.getAttribute('rate');
+        let nodes = doc.evaluate(
+          "/gesmes:Envelope/*[name()='Cube']/*[name()='Cube']/*[name()='Cube']",
+          doc.documentElement,
+          doc.documentElement,
+          XPathResult.ANY_TYPE,
+          null
+        );
+        let result = [];
+        let node;
+        while ((node = nodes.iterateNext()) != null) {
+          let currency = node.getAttribute('currency');
+          let rate = node.getAttribute('rate');
 
-        result.push({
-          currency: currency.toUpperCase(),
-          rate: Number.parseFloat(rate)
-        });
-        if (currency === 'GBP') {
           result.push({
-            currency: 'GBp',
-            rate: 100 * Number.parseFloat(rate)
+            currency: currency.toUpperCase(),
+            rate: Number.parseFloat(rate)
           });
+          if (currency === 'GBP') {
+            result.push({
+              currency: 'GBp',
+              rate: 100 * Number.parseFloat(rate)
+            });
+          }
         }
-      }
 
-      // EUR => EUR
-      result.push({ currency: 'EUR', rate: 1 });
+        // EUR => EUR
+        result.push({ currency: 'EUR', rate: 1 });
 
-      Cache.Rates = result;
-    });
+        Cache.Rates = result;
+      });
+    } catch (error) {
+      // If axios.get or any part of the parsing fails, Cache.Rates will remain null.
+      // The subsequent check for Cache.Rates == null will then throw the correct error.
+    }
   }
 
   if (Cache.Rates == null)
@@ -58,3 +63,5 @@ export async function GetRate(from, to) {
   let rate = (1 / fromRate.rate) * toRate.rate;
   return rate;
 }
+
+export { Cache };
