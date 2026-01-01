@@ -1,64 +1,30 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
 
-body {
-  margin: 0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-  overflow-x: hidden;
-}
 
-html,
-body {
-  overflow-x: hidden;
-  max-width: 100vw;
-}
+@layer base {
+  body {
+    margin: 0;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+    overflow-x: hidden;
+  }
 
-code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
 
-/* Dark mode styles */
-.dark {
-  background-color: #0f172a;
-  color: #f1f5f9;
-}
-
-.dark body {
-  background-color: #0f172a;
-  color: #f1f5f9;
-}
-
-/* Smooth transitions for dark mode toggle */
-* {
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease;
-}
-
-/* Ensure dark mode applies to entire page */
-html.dark body {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-}
-
-/* Ensure dark mode covers the entire viewport including margins */
-html.dark,
-html.dark body,
-html.dark #root,
-html.dark #app {
-  background-color: #0f172a !important;
-  min-height: 100vh;
+  code {
+    font-family:
+      source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  }
 }

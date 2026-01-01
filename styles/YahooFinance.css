@@ -2,50 +2,6 @@ div.stockName {
   text-align: left;
 }
 
-/* Light mode - dark color instead of blue */
-a.stockName:link {
-  color: #333333;
-}
-
-a.stockName:visited {
-  color: #333333;
-}
-
-a.stockName:hover {
-  color: #000000;
-  font-weight: bold;
-}
-
-.oddRow {
-  background-color: whitesmoke;
-}
-
-.evenRow {
-  background-color: white;
-}
-
-/* Dark mode styles */
-.dark a.stockName:link {
-  color: #ffffff;
-}
-
-.dark a.stockName:visited {
-  color: #ffffff;
-}
-
-.dark a.stockName:hover {
-  color: #f1f5f9;
-  font-weight: bold;
-}
-
-.dark .oddRow {
-  background-color: #1e293b;
-}
-
-.dark .evenRow {
-  background-color: #334155;
-}
-
 /* Hide scrollbar for react-window List component and all its children */
 .react-window-list,
 .react-window-list > div,

@@ -12,6 +12,20 @@ export default function Document() {
         ></meta>
       </Head>
       <body>
+        <script
+          id="theme-initializer"
+          dangerouslySetInnerHTML={{
+            __html: `
+            (function() {
+              const theme = localStorage.getItem('theme');
+              const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+              if (theme === 'dark' || (!theme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+              }
+            })();
+          `
+          }}
+        ></script>
         <Main />
         <NextScript />
       </body>

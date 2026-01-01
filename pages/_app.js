@@ -26,15 +26,6 @@ import PropTypes from 'prop-types';
 function MyApp({ Component, pageProps }) {
   const [darkMode, setDarkMode] = useState(false);
 
-  useEffect(() => {
-    const useDark =
-      localStorage.getItem('theme') === 'dark' ||
-      (localStorage.getItem('theme') === null &&
-        globalThis.window.matchMedia('(prefers-color-scheme: dark)').matches);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDarkMode(useDark);
-  }, []);
-
   // Apply dark mode class and save preference when the state changes
   useEffect(() => {
     if (darkMode) {
@@ -58,10 +49,10 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <div
         id="app"
-        className="flex flex-col min-h-screen bg-white dark:bg-gray-900"
+        className="flex flex-col min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
       >
         <NavBar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <div className="grow bg-white dark:bg-gray-900">
+        <div className="grow bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
           <Component {...pageProps} />
         </div>
       </div>

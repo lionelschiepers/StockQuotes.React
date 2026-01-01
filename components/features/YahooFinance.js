@@ -259,7 +259,7 @@ const YahooFinance = () => {
       const displayValue = formatDisplayValue(cellData, dataKey);
 
       return (
-        <div>
+        <div className="dark:text-white">
           {displayValue} {postData}
         </div>
       );
@@ -271,7 +271,7 @@ const YahooFinance = () => {
   const renderName = useCallback((rowData) => {
     return (
       <a
-        className="stockName"
+        className="text-gray-900 dark:text-white"
         target="_blank"
         rel="noopener noreferrer"
         href={`https://finance.yahoo.com/quote/${rowData.Ticker}`}
@@ -317,7 +317,11 @@ const YahooFinance = () => {
             alignItems: 'center',
             minWidth: 'max-content'
           }}
-          className={index % 2 === 0 ? 'evenRow' : 'oddRow'}
+          className={
+            index % 2 === 0
+              ? 'bg-white dark:bg-gray-800'
+              : 'bg-gray-50 dark:bg-gray-700'
+          }
         >
           <div
             style={{ flex: '0 0 350px', minWidth: '200px', padding: '6px 5px' }}
