@@ -14,8 +14,8 @@ const mockNode = (currency, rate) => ({
 
 const mockEvaluate = jest.fn((xpath, document, namespaceResolver, type, result) => {
   const nodes = [
-    mockNode('USD', '1.1000'),
-    mockNode('GBP', '0.8800'),
+    mockNode('USD', '1.1'),
+    mockNode('GBP', '0.88'),
   ];
   let i = 0;
   return {
@@ -63,7 +63,7 @@ describe('GetRate', () => {
     process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
 
     const rate = await GetRate('USD', 'EUR');
-    expect(rate).toBeCloseTo(1 / 1.1000);
+    expect(rate).toBeCloseTo(1 / 1.1);
     expect(axios.get).toHaveBeenCalledTimes(1);
     expect(axios.get).toHaveBeenCalledWith('http://test.url');
     expect(globalThis.DOMParser).toHaveBeenCalledTimes(1);
@@ -96,10 +96,10 @@ describe('GetRate', () => {
     process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
 
     const rateGBpToEUR = await GetRate('GBp', 'EUR');
-    expect(rateGBpToEUR).toBeCloseTo(1 / (0.8800 * 100)); // Rate for GBp is 100 * GBP rate
+    expect(rateGBpToEUR).toBeCloseTo(1 / (0.88 * 100)); // Rate for GBp is 100 * GBP rate
 
     const rateEURToGBp = await GetRate('EUR', 'GBp');
-    expect(rateEURToGBp).toBeCloseTo(0.8800 * 100);
+    expect(rateEURToGBp).toBeCloseTo(0.88 * 100);
 
     expect(axios.get).toHaveBeenCalledTimes(1); // Should still only call get once due to caching
     expect(globalThis.DOMParser).toHaveBeenCalledTimes(1);

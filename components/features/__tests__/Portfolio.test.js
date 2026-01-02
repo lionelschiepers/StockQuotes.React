@@ -258,10 +258,10 @@ describe('CurrencyHelper', () => {
 
     it('should set Currency to CHF for .SW tickers', async () => {
       const positions = [{ Ticker: 'TEST.SW', RateToEUR: 1 }];
-      GetRate.mockResolvedValueOnce(1.0); // Mock rate for CHF to EUR
+      GetRate.mockResolvedValueOnce(1); // Mock rate for CHF to EUR
       await CurrencyHelper.updateCurrency(positions);
       expect(positions[0].Currency).toBe('CHF');
-      expect(positions[0].RateToEUR).toBe(1.0);
+      expect(positions[0].RateToEUR).toBe(1);
       expect(GetRate).toHaveBeenCalledWith('CHF', 'EUR');
     });
 
@@ -285,10 +285,10 @@ describe('CurrencyHelper', () => {
 
     it('should set Currency to EUR for other tickers', async () => {
       const positions = [{ Ticker: 'TEST.DE', RateToEUR: 1 }];
-      GetRate.mockResolvedValueOnce(1.0); // Mock rate for EUR to EUR
+      GetRate.mockResolvedValueOnce(1); // Mock rate for EUR to EUR
       await CurrencyHelper.updateCurrency(positions);
       expect(positions[0].Currency).toBe('EUR');
-      expect(positions[0].RateToEUR).toBe(1.0);
+      expect(positions[0].RateToEUR).toBe(1);
       expect(GetRate).toHaveBeenCalledWith('EUR', 'EUR');
     });
 
