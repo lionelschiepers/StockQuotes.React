@@ -40,7 +40,9 @@ Whether you're a seasoned investor or just starting, this tracker provides a cle
 
 ### Development & Deployment
 - **ESLint & Prettier:** For code quality and consistent formatting.
-- **GitHub Actions:** For continuous integration and continuous deployment (CI/CD) to GitHub Pages (Frontend) and Azure Functions (API).
+- **GitHub Actions:** For continuous integration and continuous deployment (CI/CD).
+- **Automated Docker Builds:** Docker images are automatically built and published to [Docker Hub](https://hub.docker.com/r/lionelschiepers/stockquote-react).
+- **Vulnerability Scanning:** Published Docker containers are scanned for security vulnerabilities.
 
 ## Getting Started
 
