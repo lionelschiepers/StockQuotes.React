@@ -49,9 +49,6 @@ export async function GetRate(from, to) {
     }
   }
 
-  if (Cache.Rates == null)
-    throw new Error(`Failed to load the exchange rates from ${url}`);
-
   let fromRate = Cache.Rates.find((o) => o.currency === from);
   if (fromRate == null)
     throw new Error(`Failed to retrieve a rate for ${from}`);
