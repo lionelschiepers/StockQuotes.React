@@ -40,7 +40,7 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-pattern coverage/",
     "build:proxy": "cd api && npm install --production && npm run build:production",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d out",

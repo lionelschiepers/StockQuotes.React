@@ -198,7 +198,7 @@ describe('SecurityPostion', () => {
       expect(securityPosition.getDayGain()).toBeCloseTo(
         (securityPosition.Security.regularMarketPrice -
           securityPosition.Security.regularMarketPreviousClose) *
-        securityPosition.NumberOfShares
+          securityPosition.NumberOfShares
       );
     });
 
@@ -207,8 +207,8 @@ describe('SecurityPostion', () => {
       expect(securityPosition.getDayGain(true)).toBeCloseTo(
         (securityPosition.Security.regularMarketPrice -
           securityPosition.Security.regularMarketPreviousClose) *
-        securityPosition.NumberOfShares *
-        securityPosition.RateToEUR
+          securityPosition.NumberOfShares *
+          securityPosition.RateToEUR
       );
     });
   });
@@ -233,9 +233,9 @@ describe('SecurityPostion', () => {
       // 100 * (12 / 10 - 1) = 20
       expect(securityPosition.getDayDiff()).toBeCloseTo(
         100 *
-        (securityPosition.Security.regularMarketPrice /
-          securityPosition.Security.regularMarketPreviousClose -
-          1)
+          (securityPosition.Security.regularMarketPrice /
+            securityPosition.Security.regularMarketPreviousClose -
+            1)
       );
     });
   });
@@ -295,13 +295,147 @@ describe('CurrencyHelper', () => {
     it('should call GetRate for each position', async () => {
       const positions = [
         { Ticker: 'TEST', RateToEUR: 1 },
-        { Ticker: 'TEST.L', RateToEUR: 1 },
+        { Ticker: 'TEST.L', RateToEUR: 1 }
       ];
       GetRate.mockResolvedValueOnce(0.85).mockResolvedValueOnce(1.15);
       await CurrencyHelper.updateCurrency(positions);
       expect(GetRate).toHaveBeenCalledTimes(2);
       expect(GetRate).toHaveBeenCalledWith('USD', 'EUR');
       expect(GetRate).toHaveBeenCalledWith('GBp', 'EUR');
+    });
+  });
+});
+
+describe('Portfolio static methods', () => {
+  let positions;
+
+  beforeEach(() => {
+    positions = [
+      {
+        Ticker: 'MSFT',
+        NumberOfShares: 10,
+        MarketPriceEUR: 1000,
+        MarketPrice: 1200,
+        MarketCost: 800,
+        MarketCostEUR: 680,
+        Currency: 'USD',
+        RateToEUR: 0.85,
+        Security: {
+          regularMarketPrice: 120,
+          regularMarketPreviousClose: 100,
+          trailingAnnualDividendRate: 1
+        },
+        getDividendYield: jest.fn().mockReturnValue(10),
+        getDayGain: jest.fn().mockReturnValue(50)
+      },
+      {
+        Ticker: 'GOOG',
+        NumberOfShares: 5,
+        MarketPriceEUR: 750,
+        MarketPrice: 900,
+        MarketCost: 600,
+        MarketCostEUR: 510,
+        Currency: 'USD',
+        RateToEUR: 0.85,
+        Security: {
+          regularMarketPrice: 180,
+          regularMarketPreviousClose: 150,
+          trailingAnnualDividendRate: 1.5
+        },
+        getDividendYield: jest.fn().mockReturnValue(15),
+        getDayGain: jest.fn().mockReturnValue(75)
+      },
+      {
+        Ticker: 'EMPTY',
+        NumberOfShares: 0,
+        MarketPriceEUR: 0,
+        MarketPrice: 0,
+        MarketCost: 0,
+        MarketCostEUR: 0,
+        Currency: 'USD',
+        RateToEUR: 0.85,
+        Security: null,
+        getDividendYield: jest.fn().mockReturnValue(0),
+        getDayGain: jest.fn().mockReturnValue(0)
+      }
+    ];
+  });
+
+  describe('getDividendRatio', () => {
+    it('should calculate dividend ratio correctly', () => {
+      const ratio = Portfolio.getDividendRatio(positions);
+      // (10 + 15) / (1000 + 750) * 100 = 25 / 1750 * 100 ≈ 1.4286
+      expect(ratio).toBeCloseTo((25 / 1750) * 100);
+    });
+
+    it('should ignore positions with zero shares', () => {
+      const ratio = Portfolio.getDividendRatio(positions);
+      // Should only consider MSFT and GOOG, not EMPTY
+      expect(ratio).toBeCloseTo((25 / 1750) * 100);
+    });
+
+    it('should return Infinity if marketPrice is zero', () => {
+      const emptyPositions = positions.map((p) => ({
+        ...p,
+        MarketPriceEUR: 0
+      }));
+      const ratio = Portfolio.getDividendRatio(emptyPositions);
+      expect(ratio).toBe(Infinity);
+    });
+  });
+
+  describe('getDividendRate', () => {
+    it('should calculate total dividend rate correctly', () => {
+      const rate = Portfolio.getDividendRate(positions);
+      // 10 + 15 = 25
+      expect(rate).toBe(25);
+    });
+
+    it('should ignore positions with zero shares', () => {
+      const rate = Portfolio.getDividendRate(positions);
+      // Should only consider MSFT and GOOG, not EMPTY
+      expect(rate).toBe(25);
+    });
+
+    it('should return zero if all positions have zero shares', () => {
+      const zeroPositions = positions.map((p) => ({ ...p, NumberOfShares: 0 }));
+      const rate = Portfolio.getDividendRate(zeroPositions);
+      expect(rate).toBe(0);
+    });
+  });
+
+  describe('getDayDiff', () => {
+    it('should calculate day difference correctly', () => {
+      const dayDiff = Portfolio.getDayDiff(positions);
+      // marketPrice = 1000 + 750 = 1750
+      // dayGain = 50 + 75 = 125
+      // previousDayMarketPrice = 1750 - 125 = 1625
+      // dayDiff = 125 / 1625 ≈ 0.0769
+      expect(dayDiff).toBeCloseTo(125 / 1625);
+    });
+
+    it('should ignore positions with zero shares', () => {
+      const dayDiff = Portfolio.getDayDiff(positions);
+      // Should only consider MSFT and GOOG, not EMPTY
+      expect(dayDiff).toBeCloseTo(125 / 1625);
+    });
+
+    it('should return 0 if previous day market price is zero', () => {
+      const mockPositions = [
+        {
+          NumberOfShares: 10,
+          MarketPriceEUR: 100,
+          getDayGain: jest.fn().mockReturnValue(100) // dayGain equals marketPrice
+        }
+      ];
+      const dayDiff = Portfolio.getDayDiff(mockPositions);
+      expect(dayDiff).toBe(0);
+    });
+
+    it('should return 0 if all positions have zero shares', () => {
+      const zeroPositions = positions.map((p) => ({ ...p, NumberOfShares: 0 }));
+      const dayDiff = Portfolio.getDayDiff(zeroPositions);
+      expect(dayDiff).toBe(0);
     });
   });
 });
@@ -313,12 +447,36 @@ MSFT,Microsoft,Buy,10,100,5
 GOOG,Alphabet,Buy,5,150,2.5
 `;
   const mockParsedCsv = [
-    { Symbol: 'MSFT', Name: 'Microsoft', Type: 'Buy', Shares: '10', Price: '100', Commission: '5' },
-    { Symbol: 'GOOG', Name: 'Alphabet', Type: 'Buy', Shares: '5', Price: '150', Commission: '2.5' },
+    {
+      Symbol: 'MSFT',
+      Name: 'Microsoft',
+      Type: 'Buy',
+      Shares: '10',
+      Price: '100',
+      Commission: '5'
+    },
+    {
+      Symbol: 'GOOG',
+      Name: 'Alphabet',
+      Type: 'Buy',
+      Shares: '5',
+      Price: '150',
+      Commission: '2.5'
+    }
   ];
   const mockYahooData = [
-    { symbol: 'MSFT', regularMarketPrice: 105, regularMarketPreviousClose: 100, trailingAnnualDividendRate: 1 },
-    { symbol: 'GOOG', regularMarketPrice: 155, regularMarketPreviousClose: 150, trailingAnnualDividendRate: 1.5 },
+    {
+      symbol: 'MSFT',
+      regularMarketPrice: 105,
+      regularMarketPreviousClose: 100,
+      trailingAnnualDividendRate: 1
+    },
+    {
+      symbol: 'GOOG',
+      regularMarketPrice: 155,
+      regularMarketPreviousClose: 150,
+      trailingAnnualDividendRate: 1.5
+    }
   ];
 
   let mockYahooFinanceLoaderInstance;
@@ -327,9 +485,9 @@ GOOG,Alphabet,Buy,5,150,2.5
     axios.get.mockClear();
     papa.parse.mockClear();
     GetRate.mockClear();
-    YahooFinanceLoader.mockClear(); 
+    YahooFinanceLoader.mockClear();
     mockYahooFinanceLoaderInstance = {
-      Load: jest.fn().mockResolvedValue(mockYahooData),
+      Load: jest.fn().mockResolvedValue(mockYahooData)
     };
     YahooFinanceLoader.mockImplementation(() => mockYahooFinanceLoaderInstance);
   });
@@ -347,11 +505,14 @@ GOOG,Alphabet,Buy,5,150,2.5
     expect(GetRate).toHaveBeenCalledWith('USD', 'EUR');
     expect(YahooFinanceLoader).toHaveBeenCalledTimes(1);
     expect(YahooFinanceLoader).toHaveBeenCalledWith(); // Check if constructor was called
-    expect(mockYahooFinanceLoaderInstance.Load).toHaveBeenCalledWith(['MSFT', 'GOOG'], expect.any(Array));
+    expect(mockYahooFinanceLoaderInstance.Load).toHaveBeenCalledWith(
+      ['MSFT', 'GOOG'],
+      expect.any(Array)
+    );
 
     expect(portfolio.length).toBe(2);
 
-    const msftPosition = portfolio.find(p => p.Ticker === 'MSFT');
+    const msftPosition = portfolio.find((p) => p.Ticker === 'MSFT');
     expect(msftPosition.NumberOfShares).toBe(10);
     expect(msftPosition.MarketCost).toBe(10 * 100 + 5); // 1005
     expect(msftPosition.Name).toBe('Microsoft');
@@ -362,6 +523,123 @@ GOOG,Alphabet,Buy,5,150,2.5
     expect(msftPosition.MarketCostEUR).toBe(1005 * 0.85);
     expect(msftPosition.MarketPriceEUR).toBe(1050 * 0.85);
   });
+
+  it('should handle sell transactions correctly', async () => {
+    const csvWithSell = `
+Ticker,Name,Type,Shares,Price,Commission
+MSFT,Microsoft,Buy,10,100,5
+MSFT,Microsoft,Sell,5,120,3
+`;
+    const parsedCsvWithSell = [
+      {
+        Symbol: 'MSFT',
+        Name: 'Microsoft',
+        Type: 'Buy',
+        Shares: '10',
+        Price: '100',
+        Commission: '5'
+      },
+      {
+        Symbol: 'MSFT',
+        Name: 'Microsoft',
+        Type: 'Sell',
+        Shares: '5',
+        Price: '120',
+        Commission: '3'
+      }
+    ];
+
+    axios.get.mockResolvedValueOnce({ data: csvWithSell });
+    papa.parse.mockReturnValueOnce({ data: parsedCsvWithSell });
+    GetRate.mockResolvedValue(0.85);
+
+    const portfolio = await Portfolio.Load('http://test.csv');
+
+    expect(portfolio.length).toBe(1);
+    const msftPosition = portfolio[0];
+
+    // After selling 5 shares:
+    // NumberOfShares: 10 - 5 = 5
+    expect(msftPosition.NumberOfShares).toBe(5);
+
+    // MarketCost: (10 * 100 + 5) - (5 * 100 + 5) = 1005 - 505 = 500
+    // Note: The commission subtracted is from the original buy transaction, not the sell
+    expect(msftPosition.MarketCost).toBeCloseTo(500);
+
+    // PastGain: 5 * (120 - 100) = 100
+    expect(msftPosition.PastGain).toBe(100);
+
+    // Should have only one transaction left (the original buy with 5 shares remaining)
+    expect(msftPosition.Transactions.length).toBe(1);
+    expect(msftPosition.Transactions[0].Shares).toBe(5);
+  });
+
+  it('should handle deposit cash transactions correctly', async () => {
+    const csvWithDeposit = `
+Ticker,Name,Type,Shares,Price,Commission
+MSFT,Microsoft,Buy,10,100,5
+MSFT,Microsoft,Deposit Cash,0,0,100
+`;
+    const parsedCsvWithDeposit = [
+      {
+        Symbol: 'MSFT',
+        Name: 'Microsoft',
+        Type: 'Buy',
+        Shares: '10',
+        Price: '100',
+        Commission: '5'
+      },
+      {
+        Symbol: 'MSFT',
+        Name: 'Microsoft',
+        Type: 'Deposit Cash',
+        Shares: '0',
+        Price: '0',
+        Commission: '100'
+      }
+    ];
+
+    axios.get.mockResolvedValueOnce({ data: csvWithDeposit });
+    papa.parse.mockReturnValueOnce({ data: parsedCsvWithDeposit });
+    GetRate.mockResolvedValue(0.85);
+
+    const portfolio = await Portfolio.Load('http://test.csv');
+
+    expect(portfolio.length).toBe(1);
+    const msftPosition = portfolio[0];
+
+    // PastGain should include the deposit cash commission
+    expect(msftPosition.PastGain).toBe(100);
+    expect(msftPosition.NumberOfShares).toBe(10);
+  });
+
+  it('should handle unknown transaction types gracefully', async () => {
+    const csvWithUnknown = `
+Ticker,Name,Type,Shares,Price,Commission
+MSFT,Microsoft,Unknown,10,100,5
+`;
+    const parsedCsvWithUnknown = [
+      {
+        Symbol: 'MSFT',
+        Name: 'Microsoft',
+        Type: 'Unknown',
+        Shares: '10',
+        Price: '100',
+        Commission: '5'
+      }
+    ];
+
+    axios.get.mockResolvedValueOnce({ data: csvWithUnknown });
+    papa.parse.mockReturnValueOnce({ data: parsedCsvWithUnknown });
+    GetRate.mockResolvedValue(0.85);
+
+    const portfolio = await Portfolio.Load('http://test.csv');
+
+    // Unknown transaction types create a position but don't modify it (zero shares)
+    expect(portfolio.length).toBe(1);
+    const msftPosition = portfolio[0];
+    expect(msftPosition.Ticker).toBe('MSFT');
+    expect(msftPosition.NumberOfShares).toBe(0);
+    expect(msftPosition.MarketCost).toBe(0);
+  });
 });
-
-

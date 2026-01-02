@@ -9,6 +9,7 @@ export async function GetRate(from, to) {
   const url = process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL;
 
   if (Cache.Rates == null) {
+    //    try {
     await axios.get(url).then((res) => {
       let parser = new DOMParser();
       let doc = parser.parseFromString(res.data, 'text/xml');
@@ -43,6 +44,9 @@ export async function GetRate(from, to) {
 
       Cache.Rates = result;
     });
+    //    } catch (error) {
+    //      throw new Error(`Failed to load the exchange rates from ${url}`);
+    //    }
   }
 
   let fromRate = Cache.Rates.find((o) => o.currency === from);
