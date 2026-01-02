@@ -1,5 +1,7 @@
 # Stock Portfolio Tracker
 
+[![Deploy application to Pages](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml/badge.svg)](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml)
+[![Code Coverage](https://img.shields.io/badge/Coverage-Pending-lightgrey)](https://example.com/your-code-coverage-report) <!-- Placeholder: Integrate with a code coverage service like Codecov or Coveralls for an active badge -->
 [![Next.js](https://img.shields.io/badge/Powered%20by-Next.js-black)](https://nextjs.org/)
 [![Auth0](https://img.shields.io/badge/Auth-Auth0-blue)](https://auth0.com/)
 [![Azure Functions](https://img.shields.io/badge/Serverless-Azure%20Functions-0078D4)](https://azure.microsoft.com/en-us/services/functions/)
