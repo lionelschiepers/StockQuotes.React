@@ -24,14 +24,15 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 const getInitialTheme = () => {
-  if (globalThis.window !== undefined) {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    return globalThis.window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (globalThis.window === undefined) {
+    return false;
   }
-  return false;
+
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    return savedTheme === 'dark';
+  }
+  return globalThis.window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
 
 function MyApp({ Component, pageProps }) {
