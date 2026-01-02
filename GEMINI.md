@@ -50,3 +50,4 @@ To build and run the backend API, you will need to have Node.js and the Azure Fu
 - SonarQube advise: Don't use a zero fraction in the number
 - SonarQube advise: prefer globalThis instead of window
 - SonarQube advise: prefer globalThis instead of global
+- SonarQube advise: Compare with `undefined` directly instead of using `typeof`
