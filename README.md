@@ -1,66 +1,115 @@
-This project is built with [Next.js](https://nextjs.org/) and React.
+# Stock Portfolio Tracker
 
-## Available Scripts
+[![Next.js](https://img.shields.io/badge/Powered%20by-Next.js-black)](https://nextjs.org/)
+[![Auth0](https://img.shields.io/badge/Auth-Auth0-blue)](https://auth0.com/)
+[![Azure Functions](https://img.shields.io/badge/Serverless-Azure%20Functions-0078D4)](https://azure.microsoft.com/en-us/services/functions/)
+[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4)](https://tailwindcss.com/)
+[![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub%20Actions-2088FF)](https://github.com/features/actions)
 
-In the project directory, you can run:
+## Project Overview
 
-### `npm run dev`
+This project is a modern, responsive stock portfolio tracking application designed to help you keep a close eye on your investments. Built with the powerful Next.js framework, it offers a seamless user experience for managing and visualizing your stock holdings.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The application leverages a robust Azure Functions API to fetch real-time stock data directly from Yahoo Finance, ensuring you always have up-to-date information. Secure user authentication is handled via Auth0, providing a safe and personalized environment for your financial data.
 
-The page will reload if you make edits. You will also see any lint errors in the console.
+Whether you're a seasoned investor or just starting, this tracker provides a clean and intuitive interface to monitor your portfolio's performance.
 
-### `npm run build`
+## Features
 
-Builds the app for production to the `out` folder (static export).<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Real-time Stock Data:** Get instant updates on your stock prices and portfolio value, powered by Yahoo Finance.
+- **Personalized Portfolio Management:** Track individual stock holdings and see their performance at a glance.
+- **Secure Authentication:** Log in with confidence using Auth0 for secure access to your portfolio.
+- **Dynamic Data Visualization:** Understand your investments better with clear and concise data representation.
+- **Responsive Design:** Access your portfolio from any device, thanks to a mobile-first and responsive user interface.
+- **CSV-based Portfolio Loading:** Easily load your portfolio data from a CSV file hosted on GitHub, offering flexibility and easy updates.
+- **Dark Mode Support:** Enjoy a comfortable viewing experience with built-in dark mode, powered by Tailwind CSS.
 
-### `npm start`
+## Technologies Used
 
-Starts the production server. Make sure you have run `npm run build` first.
+### Frontend
+- **Next.js:** A React framework for production, providing server-side rendering and static site generation.
+- **React:** A JavaScript library for building user interfaces.
+- **Tailwind CSS:** A utility-first CSS framework for rapidly building custom designs.
+- **Auth0:** For secure and seamless user authentication.
 
-### `npm run lint`
+### Backend
+- **Azure Functions:** Serverless compute service that enables you to run code without provisioning or managing infrastructure.
+- **TypeScript:** A typed superset of JavaScript that compiles to plain JavaScript.
+- **`yahoo-finance2`:** A library for fetching financial data from Yahoo Finance.
 
-Runs ESLint to check for code quality issues.
+### Development & Deployment
+- **ESLint & Prettier:** For code quality and consistent formatting.
+- **GitHub Actions:** For continuous integration and continuous deployment (CI/CD) to GitHub Pages (Frontend) and Azure Functions (API).
 
-### `npm run build:proxy`
+## Getting Started
 
-Builds the API proxy functions located in the `api/` directory.
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-### `npm run deploy`
+### Prerequisites
 
-Builds and deploys the app to GitHub Pages using the `gh-pages` package.
+- Node.js (LTS recommended)
+- Azure Functions Core Tools (for running the backend API locally)
+- Git
 
-## Project Structure
+### Installation
 
-This project follows a structured approach with the following key directories:
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/StockQuotes.React.git
+    cd StockQuotes.React
+    ```
 
-- `pages/` - Next.js pages and API routes
-- `components/` - React components organized by type:
-  - `features/` - Business logic components
-  - `layout/` - Layout components like navigation
-  - `ui/` - Reusable UI components
-- `lib/` - Configuration files and utilities
-- `api/` - Azure Functions for API proxy
-- `public/` - Static assets
-- `styles/` - CSS and styling files
+2.  **Configure Environment Variables:**
+    Create a `.env` file in the root directory of the project (you can copy `.env.example` as a template) and fill in the necessary environment variables for Auth0 and your API endpoint.
 
-## Learn More
+3.  **Install Frontend Dependencies:**
+    Navigate to the project root and install the dependencies:
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, check out the [Next.js documentation](https://nextjs.org/docs).
+4.  **Install Backend Dependencies:**
+    Navigate into the `api` directory and install its dependencies:
+    ```bash
+    cd api
+    npm install
+    cd ..
+    ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Running the Application
 
-### Deployment
+1.  **Start the Backend API:**
+    Open a new terminal, navigate to the `api` directory, and start the Azure Functions API:
+    ```bash
+    cd api
+    npm start
+    ```
+    The API will typically run on `http://localhost:7071`.
 
-This project is configured for static export and can be deployed to various static hosting platforms. The current setup includes GitHub Pages deployment via the `npm run deploy` script.
+2.  **Start the Frontend Application:**
+    Open another terminal, navigate to the project root, and start the Next.js development server:
+    ```bash
+    npm run dev
+    ```
+    The frontend application will typically run on `http://localhost:3000`.
 
-For more deployment options, see the [Next.js deployment documentation](https://nextjs.org/docs/deployment).
+3.  **Access the Application:**
+    Open your web browser and go to `http://localhost:3000`.
 
-### Static Export Configuration
+## Deployment
 
-The project uses Next.js static export feature with the following configuration:
-- Output mode: static export
-- Trailing slashes: enabled
-- Images: unoptimized (for static compatibility)
+The project is configured for continuous deployment using GitHub Actions:
+- The frontend is deployed to GitHub Pages.
+- The Azure Functions API is deployed to Azure Functions.
+
+## Contributing
+
+We welcome contributions! Please feel free to fork the repository, open issues, and submit pull requests.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+**Happy Investing!** 📈
