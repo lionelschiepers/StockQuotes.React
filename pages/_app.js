@@ -14,7 +14,7 @@ const providerConfig = {
   ...(config.audience ? { audience: config.audience } : null),
   authorizationParams: {
     redirect_uri:
-      typeof globalThis.window === 'object'
+      globalThis.window !== undefined
         ? globalThis.window.location.origin
         : ''
   }
@@ -24,7 +24,7 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 const getInitialTheme = () => {
-  if (typeof globalThis.window !== 'undefined') {
+  if (globalThis.window !== undefined) {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme === 'dark';
