@@ -1,7 +1,7 @@
 # Stock Portfolio Tracker
 
 [![Build](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml/badge.svg)](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml)
-[![Code Coverage](https://img.shields.io/badge/Coverage-Pending-lightgrey)](https://example.com/your-code-coverage-report) <!-- Placeholder: Integrate with a code coverage service like Codecov or Coveralls for an active badge -->
+[![codecov](https://codecov.io/github/lionelschiepers/StockQuotes.React/graph/badge.svg?token=T7H8JXQ1LQ)](https://codecov.io/github/lionelschiepers/StockQuotes.React)
 [![Next.js](https://img.shields.io/badge/Powered%20by-Next.js-black)](https://nextjs.org/)
 [![Auth0](https://img.shields.io/badge/Auth-Auth0-blue)](https://auth0.com/)
 [![Azure Functions](https://img.shields.io/badge/Serverless-Azure%20Functions-0078D4)](https://azure.microsoft.com/en-us/services/functions/)
