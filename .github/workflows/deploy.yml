@@ -1,4 +1,4 @@
-name: Deploy application to Pages
+name: Build StockQuotes
 
 on:
   # Runs on pushes targeting the main branch
@@ -70,7 +70,7 @@ jobs:
         run: npm run test -- --coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
