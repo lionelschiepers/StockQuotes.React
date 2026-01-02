@@ -47,3 +47,6 @@ To build and run the backend API, you will need to have Node.js and the Azure Fu
 - don't execute 'npm run dev' for testing
 - don't automatically update git
 - dark mode is managed by tailwindcss (using @custom-variant dark in global.css)
+- SonarQube advise: Don't use a zero fraction in the number
+- SonarQube advise: prefer globalThis instead of window
+- SonarQube advise: prefer globalThis instead of global
