@@ -45,8 +45,7 @@ export async function GetRate(from, to) {
         Cache.Rates = result;
       });
     } catch (error) {
-      // If axios.get or any part of the parsing fails, Cache.Rates will remain null.
-      // The subsequent check for Cache.Rates == null will then throw the correct error.
+      throw new Error(`Failed to load the exchange rates from ${url}`);
     }
   }
 
