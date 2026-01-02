@@ -1,12 +1,11 @@
 # Stock Portfolio Tracker
-
-[![Build](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml/badge.svg)](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml)
-[![codecov](https://codecov.io/github/lionelschiepers/StockQuotes.React/graph/badge.svg?token=T7H8JXQ1LQ)](https://codecov.io/github/lionelschiepers/StockQuotes.React)
 [![Next.js](https://img.shields.io/badge/Powered%20by-Next.js-black)](https://nextjs.org/)
 [![Auth0](https://img.shields.io/badge/Auth-Auth0-blue)](https://auth0.com/)
 [![Azure Functions](https://img.shields.io/badge/Serverless-Azure%20Functions-0078D4)](https://azure.microsoft.com/en-us/services/functions/)
-[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4)](https://tailwindcss.com/)\
 [![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub%20Actions-2088FF)](https://github.com/features/actions)
+[![Build](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml/badge.svg)](https://github.com/lionelschiepers/StockQuotes.React/actions/workflows/deploy.yml)
+[![codecov](https://codecov.io/github/lionelschiepers/StockQuotes.React/graph/badge.svg?token=T7H8JXQ1LQ)](https://codecov.io/github/lionelschiepers/StockQuotes.React)
 
 ## Project Overview
 
