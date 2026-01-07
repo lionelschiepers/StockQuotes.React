@@ -228,6 +228,11 @@ const YahooFinance = () => {
 
     if (shouldRemoveDecimals) {
       return Math.round(value).toLocaleString('fr-FR');
+    } else if (dataKey === 'Diff' || dataKey === 'GainPercent') {
+      return value.toLocaleString('fr-FR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     } else {
       return value.toLocaleString('fr-FR', {
         minimumFractionDigits: 0,
