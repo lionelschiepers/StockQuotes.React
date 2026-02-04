@@ -221,6 +221,13 @@ const YahooFinance = () => {
   const formatDisplayValue = useCallback((value, dataKey) => {
     if (value == null) return '';
 
+    if (dataKey === 'Security.regularMarketPrice') {
+      return value.toLocaleString('fr-FR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
     const shouldRemoveDecimals =
       dataKey === 'MarketCost' ||
       dataKey === 'MarketPrice' ||
