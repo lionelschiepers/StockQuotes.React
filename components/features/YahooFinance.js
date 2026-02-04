@@ -10,8 +10,9 @@ import YahooFinanceRow from './YahooFinanceRow';
 const YahooFinance = () => {
   const { isAuthenticated, user } = useAuth0();
 
-  const [portfolio, setPortfolio] = useState([]);
-  const [marketCost, setMarketCost] = useState(0);
+const [portfolio, setPortfolio] = useState([]);
+const [filteredPortfolio, setFilteredPortfolio] = useState([]);
+const [marketCost, setMarketCost] = useState(0);
   const [marketPrice, setMarketPrice] = useState(0);
   const [pastGain, setPastGain] = useState(0);
   const [gain, setGain] = useState(0);
@@ -20,8 +21,9 @@ const YahooFinance = () => {
   const [dividendRate, setDividendRate] = useState(0);
   const [sortBy, setSortBy] = useState(null);
   const [sortDirection, setSortDirection] = useState(null);
-  const [displayInEUR, setDisplayInEUR] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+const [displayInEUR, setDisplayInEUR] = useState(false);
+const [filterZeroShares, setFilterZeroShares] = useState(true);
+const [isLoading, setIsLoading] = useState(false);
 
   // Load portfolio data when component mounts or user changes
   useEffect(() => {
@@ -37,6 +39,12 @@ const YahooFinance = () => {
 
         const portfolioData = await Portfolio.Load(portfolioUri);
         setPortfolio(portfolioData);
+
+        // Apply zero shares filter if enabled
+        const filteredData = filterZeroShares
+          ? portfolioData.filter((position) => position.NumberOfShares > 0)
+          : portfolioData;
+        setFilteredPortfolio(filteredData);
 
         let totalMarketCost = 0;
         let totalMarketPrice = 0;
@@ -81,6 +89,14 @@ const YahooFinance = () => {
 
     loadPortfolio();
   }, [isAuthenticated, user]);
+
+  // Re-filter portfolio when filterZeroShares changes
+  useEffect(() => {
+    const filteredData = filterZeroShares
+      ? portfolio.filter((position) => position.NumberOfShares > 0)
+      : portfolio;
+    setFilteredPortfolio(filteredData);
+  }, [filterZeroShares, portfolio]);
 
   // Sort functionality
   const getSortValue = useCallback(
@@ -152,8 +168,8 @@ const YahooFinance = () => {
 
   const handleSort = useCallback(
     ({ sortBy: sortByField, sortDirection: direction }) => {
-      const orderedList = internalSort(portfolio, sortByField, direction);
-      setPortfolio(orderedList);
+      const orderedList = internalSort(filteredPortfolio, sortByField, direction);
+      setFilteredPortfolio(orderedList);
       setSortBy(sortByField);
       setSortDirection(direction);
     },
@@ -299,6 +315,11 @@ const YahooFinance = () => {
     setDisplayInEUR((prev) => !prev);
   }, []);
 
+  // Toggle zero shares filter
+  const handleFilterZeroShares = useCallback(() => {
+    setFilterZeroShares((prev) => !prev);
+  }, []);
+
   // Memoized sort indicator
   const getSortIndicator = useCallback(
     (field) => {
@@ -407,6 +428,17 @@ const YahooFinance = () => {
             Display in EUR
           </span>
         </label>
+        <label className="flex items-center space-x-2 cursor-pointer">
+          <input
+            type="checkbox"
+            onChange={handleFilterZeroShares}
+            checked={filterZeroShares}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          />
+          <span className="text-gray-700 dark:text-gray-300">
+            Remove closed positions
+          </span>
+        </label>
       </div>
       <div className="yahoo-finance-table-wrapper">
         <div className="flex font-bold border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
@@ -499,10 +531,10 @@ const YahooFinance = () => {
         <List
           className="react-window-list"
           rowComponent={YahooFinanceRow}
-          rowCount={portfolio.length}
+          rowCount={filteredPortfolio.length}
           rowHeight={32}
           height={600}
-          rowProps={{ portfolio, displayInEUR, renderName, renderPrice }}
+          rowProps={{ portfolio: filteredPortfolio, displayInEUR, renderName, renderPrice }}
         />
       </div>
     </main>
