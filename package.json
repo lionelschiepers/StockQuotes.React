@@ -19,10 +19,10 @@
     "prettier": "^3.8.1"
   },
   "dependencies": {
-    "@auth0/auth0-react": "^2.12.0",
-    "@tailwindcss/postcss": "^4.1.18",
+    "@auth0/auth0-react": "^2.15.0",
+    "@tailwindcss/postcss": "^4.2.0",
     "autoprefixer": "^10.4.24",
-    "axios": "^1.13.4",
+    "axios": "^1.13.5",
     "gh-pages": "^6.3.0",
     "highlight.js": "^11.11.1",
     "next": "^16.1.6",
@@ -31,9 +31,9 @@
     "react": "^19.2.4",
     "react-csv": "^2.2.2",
     "react-dom": "^19.2.4",
-    "react-virtualized-auto-sizer": "^2.0.2",
-    "react-window": "^2.2.6",
-    "tailwindcss": "^4.1.18"
+    "react-virtualized-auto-sizer": "^2.0.3",
+    "react-window": "^2.2.7",
+    "tailwindcss": "^4.2.0"
   },
   "scripts": {
     "dev": "next dev",

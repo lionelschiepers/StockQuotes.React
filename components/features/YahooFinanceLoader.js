@@ -1,12 +1,38 @@
 import axios from 'axios';
 
-// Native JavaScript helper function to chunk arrays
 function chunk(array, size) {
   const chunks = [];
   for (let i = 0; i < array.length; i += size) {
     chunks.push(array.slice(i, i + size));
   }
   return chunks;
+}
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
+  let lastError;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const response = await axios.get(url);
+      return response;
+    } catch (error) {
+      lastError = error;
+      if (error.response?.status === 429) {
+        const retryAfter = error.response.headers['retry-after'];
+        const delay = retryAfter
+          ? parseInt(retryAfter, 10) * 1000
+          : baseDelay * Math.pow(2, attempt);
+        console.warn(
+          `Rate limited (429). Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`
+        );
+        await sleep(delay);
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw lastError;
 }
 
 // const anyCorsHttp = axios.create();
@@ -130,23 +156,18 @@ export class YahooFinanceLoader {
     let urls = [];
     chunks.forEach((item, index, array) => {
       let url = getUrl(chunks[index], fields);
-      urls.push(axios.get(url));
+      urls.push(fetchWithRetry(url));
     });
 
-    // fetch all urls in parallel.
-    await axios.all(urls).then(
-      axios.spread((...responses) => {
-        responses.forEach((response) => {
-          let chunkData = response.data;
-
-          chunkData.forEach((o) => {
-            o.Date = now;
-            localStorage.setItem(o.symbol, JSON.stringify(o));
-            result.push(o);
-          });
-        });
-      })
-    );
+    const responses = await Promise.all(urls);
+    responses.forEach((response) => {
+      let chunkData = response.data;
+      chunkData.forEach((o) => {
+        o.Date = now;
+        localStorage.setItem(o.symbol, JSON.stringify(o));
+        result.push(o);
+      });
+    });
 
     return result;
   }

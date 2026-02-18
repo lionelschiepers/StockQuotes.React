@@ -10,9 +10,9 @@ import YahooFinanceRow from './YahooFinanceRow';
 const YahooFinance = () => {
   const { isAuthenticated, user } = useAuth0();
 
-const [portfolio, setPortfolio] = useState([]);
-const [filteredPortfolio, setFilteredPortfolio] = useState([]);
-const [marketCost, setMarketCost] = useState(0);
+  const [portfolio, setPortfolio] = useState([]);
+  const [filteredPortfolio, setFilteredPortfolio] = useState([]);
+  const [marketCost, setMarketCost] = useState(0);
   const [marketPrice, setMarketPrice] = useState(0);
   const [pastGain, setPastGain] = useState(0);
   const [gain, setGain] = useState(0);
@@ -21,9 +21,9 @@ const [marketCost, setMarketCost] = useState(0);
   const [dividendRate, setDividendRate] = useState(0);
   const [sortBy, setSortBy] = useState(null);
   const [sortDirection, setSortDirection] = useState(null);
-const [displayInEUR, setDisplayInEUR] = useState(false);
-const [filterZeroShares, setFilterZeroShares] = useState(true);
-const [isLoading, setIsLoading] = useState(false);
+  const [displayInEUR, setDisplayInEUR] = useState(false);
+  const [filterZeroShares, setFilterZeroShares] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Load portfolio data when component mounts or user changes
   useEffect(() => {
@@ -39,12 +39,6 @@ const [isLoading, setIsLoading] = useState(false);
 
         const portfolioData = await Portfolio.Load(portfolioUri);
         setPortfolio(portfolioData);
-
-        // Apply zero shares filter if enabled
-        const filteredData = filterZeroShares
-          ? portfolioData.filter((position) => position.NumberOfShares > 0)
-          : portfolioData;
-        setFilteredPortfolio(filteredData);
 
         let totalMarketCost = 0;
         let totalMarketPrice = 0;
@@ -168,12 +162,16 @@ const [isLoading, setIsLoading] = useState(false);
 
   const handleSort = useCallback(
     ({ sortBy: sortByField, sortDirection: direction }) => {
-      const orderedList = internalSort(filteredPortfolio, sortByField, direction);
+      const orderedList = internalSort(
+        filteredPortfolio,
+        sortByField,
+        direction
+      );
       setFilteredPortfolio(orderedList);
       setSortBy(sortByField);
       setSortDirection(direction);
     },
-    [portfolio, internalSort]
+    [filteredPortfolio, internalSort]
   );
 
   // Helper function to format values in K€ with French dot separators
@@ -534,7 +532,12 @@ const [isLoading, setIsLoading] = useState(false);
           rowCount={filteredPortfolio.length}
           rowHeight={32}
           height={600}
-          rowProps={{ portfolio: filteredPortfolio, displayInEUR, renderName, renderPrice }}
+          rowProps={{
+            portfolio: filteredPortfolio,
+            displayInEUR,
+            renderName,
+            renderPrice
+          }}
         />
       </div>
     </main>
