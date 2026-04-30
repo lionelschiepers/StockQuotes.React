@@ -18,8 +18,7 @@ export default function Document() {
             __html: `
             (function() {
               const theme = localStorage.getItem('theme');
-              const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              if (theme === 'dark' || (!theme && prefersDark)) {
+              if (theme !== 'light') {
                 document.documentElement.classList.add('dark');
               }
             })();
