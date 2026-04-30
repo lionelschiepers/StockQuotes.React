@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { List } from 'react-window';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from './Portfolio';
@@ -11,7 +11,6 @@ const YahooFinance = () => {
   const { isAuthenticated, user } = useAuth0();
 
   const [portfolio, setPortfolio] = useState([]);
-  const [filteredPortfolio, setFilteredPortfolio] = useState([]);
   const [marketCost, setMarketCost] = useState(0);
   const [marketPrice, setMarketPrice] = useState(0);
   const [pastGain, setPastGain] = useState(0);
@@ -84,14 +83,6 @@ const YahooFinance = () => {
     loadPortfolio();
   }, [isAuthenticated, user]);
 
-  // Re-filter portfolio when filterZeroShares changes
-  useEffect(() => {
-    const filteredData = filterZeroShares
-      ? portfolio.filter((position) => position.NumberOfShares > 0)
-      : portfolio;
-    setFilteredPortfolio(filteredData);
-  }, [filterZeroShares, portfolio]);
-
   // Sort functionality
   const getSortValue = useCallback(
     (item, sortByField) => {
@@ -160,18 +151,24 @@ const YahooFinance = () => {
     [displayInEUR, getSortValue]
   );
 
+  const filteredPortfolio = useMemo(() => {
+    const filteredData = filterZeroShares
+      ? portfolio.filter((position) => position.NumberOfShares > 0)
+      : portfolio;
+
+    if (sortBy == null || sortDirection == null) {
+      return filteredData;
+    }
+
+    return internalSort(filteredData, sortBy, sortDirection);
+  }, [filterZeroShares, portfolio, sortBy, sortDirection, internalSort]);
+
   const handleSort = useCallback(
     ({ sortBy: sortByField, sortDirection: direction }) => {
-      const orderedList = internalSort(
-        filteredPortfolio,
-        sortByField,
-        direction
-      );
-      setFilteredPortfolio(orderedList);
       setSortBy(sortByField);
       setSortDirection(direction);
     },
-    [filteredPortfolio, internalSort]
+    []
   );
 
   // Helper function to format values in K€ with French dot separators

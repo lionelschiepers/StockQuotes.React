@@ -6,23 +6,26 @@
   "devDependencies": {
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-react": "^7.28.5",
+    "@next/eslint-plugin-next": "^16.2.4",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "eslint": "^10.2.1",
-    "eslint-config-next": "^16.2.4",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.5.0",
     "husky": "^9.1.7",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "lint-staged": "^16.4.0",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.12",
     "prettier": "^3.8.3"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.16.2",
-    "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.4",
     "autoprefixer": "^10.5.0",
-    "axios": "^1.15.1",
+    "axios": "^1.15.2",
     "gh-pages": "^6.3.0",
     "highlight.js": "^11.11.1",
     "next": "^16.2.4",
@@ -33,7 +36,7 @@
     "react-dom": "^19.2.5",
     "react-virtualized-auto-sizer": "^2.0.3",
     "react-window": "^2.2.7",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.4"
   },
   "scripts": {
     "dev": "next dev",
