@@ -1,10 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
-import Highlight from '../components/features/Highlight';
 import Loading from '../components/ui/Loading';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 
-export default function Profile() {
+function Profile() {
   const { user, isLoading } = useAuth0();
 
   if (isLoading) {
@@ -31,13 +30,14 @@ export default function Profile() {
         </div>
       </div>
       <div>
-        <Highlight>{JSON.stringify(user, null, 2)}</Highlight>
+        <pre className="rounded bg-gray-900 text-gray-100 p-4 overflow-x-auto text-sm">
+          <code>{JSON.stringify(user, null, 2)}</code>
+        </pre>
       </div>
     </main>
   );
 }
 
-// Export with authentication requirement
-export const withAuth = withAuthenticationRequired(Profile, {
+export default withAuthenticationRequired(Profile, {
   onRedirecting: () => <Loading />
 });

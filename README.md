@@ -72,32 +72,20 @@ Follow these instructions to get a copy of the project up and running on your lo
     npm install
     ```
 
-4.  **Install Backend Dependencies:**
-    Navigate into the `api` directory and install its dependencies:
-    ```bash
-    cd api
-    npm install
-    cd ..
-    ```
+    > **Note:** The Azure Functions backend lives in a separate repository.
+    > For local development you can either point `NEXT_PUBLIC_*_URL` to a
+    > deployed instance or run the API locally on `http://localhost:7071`.
 
 ### Running the Application
 
-1.  **Start the Backend API:**
-    Open a new terminal, navigate to the `api` directory, and start the Azure Functions API:
-    ```bash
-    cd api
-    npm start
-    ```
-    The API will typically run on `http://localhost:7071`.
-
-2.  **Start the Frontend Application:**
-    Open another terminal, navigate to the project root, and start the Next.js development server:
+1.  **Start the Frontend Application:**
+    Navigate to the project root, and start the Next.js development server:
     ```bash
     npm run dev
     ```
     The frontend application will typically run on `http://localhost:3000`.
 
-3.  **Access the Application:**
+2.  **Access the Application:**
     Open your web browser and go to `http://localhost:3000`.
 
 ## Deployment
@@ -109,10 +97,6 @@ The project is configured for continuous deployment using GitHub Actions:
 ## Contributing
 
 We welcome contributions! Please feel free to fork the repository, open issues, and submit pull requests.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ---
 

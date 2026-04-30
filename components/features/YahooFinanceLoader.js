@@ -40,7 +40,6 @@ async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
 function getUrl(quotes, fields) {
   if (!Array.isArray(quotes)) quotes = [quotes];
 
-  //  let url = process.env.REACT_APP_YAHOO_URL + "?symbols=" + quotes.join(",");
   let url = process.env.NEXT_PUBLIC_YAHOO_URL + '?symbols=' + quotes.join(',');
   if (fields == null) return url;
 
