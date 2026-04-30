@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from './Portfolio';
 import { CSVLink } from 'react-csv';
 import SkeletonLoader from '../ui/SkeletonLoader';
+import { sanitizeForCsv } from '../../lib/security/csvSanitize';
 
 import YahooFinanceRow from './YahooFinanceRow';
 
@@ -336,6 +337,8 @@ const YahooFinance = () => {
     [sortBy, sortDirection, handleSort]
   );
 
+  const csvData = useMemo(() => sanitizeForCsv(portfolio), [portfolio]);
+
   if (isLoading) {
     return <SkeletonLoader />;
   }
@@ -396,7 +399,7 @@ const YahooFinance = () => {
           </div>
           <div className="text-right">
             <CSVLink
-              data={portfolio}
+              data={csvData}
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Download data

@@ -133,7 +133,7 @@ describe('YahooFinanceLoader.Load (cache)', () => {
       regularMarketPrice: 100,
       Date: Date.now()
     };
-    localStorage.setItem('AAPL', JSON.stringify(cached));
+    localStorage.setItem('yh:AAPL', JSON.stringify(cached));
 
     const loader = new YahooFinanceLoader();
     const result = await loader.Load(['AAPL'], ['regularMarketPrice']);
@@ -149,7 +149,7 @@ describe('YahooFinanceLoader.Load (cache)', () => {
       regularMarketPrice: 100,
       Date: Date.now() - 10 * 60 * 1000 // 10 minutes ago, > 5 min TTL
     };
-    localStorage.setItem('AAPL', JSON.stringify(expired));
+    localStorage.setItem('yh:AAPL', JSON.stringify(expired));
 
     axios.get.mockResolvedValueOnce({
       data: [{ symbol: 'AAPL', regularMarketPrice: 150 }]
@@ -162,10 +162,33 @@ describe('YahooFinanceLoader.Load (cache)', () => {
     expect(result).toHaveLength(1);
     expect(result[0].regularMarketPrice).toBe(150);
 
-    // The fresh response was written back to the cache.
-    const stored = JSON.parse(localStorage.getItem('AAPL'));
+    // The fresh response was written back to the (namespaced) cache.
+    const stored = JSON.parse(localStorage.getItem('yh:AAPL'));
     expect(stored.regularMarketPrice).toBe(150);
     expect(stored.Date).toBeGreaterThan(expired.Date);
+  });
+
+  it('prunes stale namespaced entries on load even when not requested', async () => {
+    // A delisted ticker that's been hanging around in localStorage forever.
+    localStorage.setItem(
+      'yh:DELISTED',
+      JSON.stringify({
+        symbol: 'DELISTED',
+        Date: Date.now() - 24 * 60 * 60 * 1000
+      })
+    );
+    // An unrelated entry must not be touched by the prune.
+    localStorage.setItem('theme', 'dark');
+
+    axios.get.mockResolvedValueOnce({
+      data: [{ symbol: 'AAPL', regularMarketPrice: 150 }]
+    });
+
+    const loader = new YahooFinanceLoader();
+    await loader.Load(['AAPL'], ['regularMarketPrice']);
+
+    expect(localStorage.getItem('yh:DELISTED')).toBeNull();
+    expect(localStorage.getItem('theme')).toBe('dark');
   });
 
   it('chunks symbol lists into groups of 50 and issues one request per chunk', async () => {

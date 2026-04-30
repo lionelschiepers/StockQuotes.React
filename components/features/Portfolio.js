@@ -150,14 +150,44 @@ export class Portfolio {
       const parsedCsv = papa.parse(res.data, { header: true }).data;
 
       parsedCsv.forEach((rawRow) => {
+        // Validate the raw row before doing anything with it. A malformed
+        // CSV (missing fields, non-numeric Shares/Price, unknown Type) would
+        // otherwise produce NaN values that propagate through totals.
+        if (
+          rawRow == null ||
+          typeof rawRow.Symbol !== 'string' ||
+          rawRow.Symbol.length === 0 ||
+          typeof rawRow.Type !== 'string' ||
+          rawRow.Type.length === 0
+        ) {
+          return;
+        }
+
+        const shares = Math.abs(Number.parseFloat(rawRow.Shares));
+        const price = Number.parseFloat(rawRow.Price);
+        const commission = Number.parseFloat(rawRow.Commission);
+
+        const type = rawRow.Type.toLowerCase();
+        // Shares/Price are mandatory for buy & sell. Commission is the only
+        // numeric field that matters for "deposit cash" rows.
+        if (
+          (type === 'buy' || type === 'sell') &&
+          (Number.isNaN(shares) || Number.isNaN(price))
+        ) {
+          return;
+        }
+        if (type === 'deposit cash' && Number.isNaN(commission)) {
+          return;
+        }
+
         // Work on a copy so the parsed input isn't mutated. The 'sell' branch
         // below decrements `Shares`, which would corrupt the source on a
         // re-parse otherwise.
         const data = {
           ...rawRow,
-          Shares: Math.abs(Number.parseFloat(rawRow.Shares)),
-          Price: Number.parseFloat(rawRow.Price),
-          Commission: Number.parseFloat(rawRow.Commission)
+          Shares: shares,
+          Price: price,
+          Commission: Number.isNaN(commission) ? 0 : commission
         };
 
         let item = result.find((o) => o.Ticker === data.Symbol);
@@ -168,7 +198,7 @@ export class Portfolio {
           result.push(item);
         }
 
-        switch (data.Type.toLowerCase()) {
+        switch (type) {
           case 'buy':
             item.NumberOfShares += data.Shares;
             item.MarketCost += data.Shares * data.Price + data.Commission;

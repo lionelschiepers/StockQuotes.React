@@ -147,32 +147,61 @@ export const YahooFinanceFields = {
     */
 };
 
+// Namespaced cache key prefix so we can identify (and prune) our own entries
+// in localStorage without colliding with anything else the SPA stores.
+const CACHE_PREFIX = 'yh:';
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
+function pruneExpired(now) {
+  if (typeof localStorage === 'undefined') return;
+  // Snapshot the keys first because we mutate localStorage inside the loop.
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(CACHE_PREFIX)) keys.push(key);
+  }
+  for (const key of keys) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw == null) continue;
+      const parsed = JSON.parse(raw);
+      if (parsed?.Date == null || now - parsed.Date >= CACHE_TTL_MS) {
+        localStorage.removeItem(key);
+      }
+    } catch {
+      // Corrupt entry — drop it.
+      localStorage.removeItem(key);
+    }
+  }
+}
+
 export class YahooFinanceLoader {
   async Load(symbols, fields) {
-    const ttl = 300 * 1000;
-
     const now = Date.now();
+
+    // Sweep stale / delisted symbols on every load so the cache stays bounded.
+    pruneExpired(now);
 
     let result = [];
 
     for (let i = symbols.length - 1; i >= 0; i--) {
       let symbol = symbols[i];
-      let cacheItem = localStorage.getItem(symbol);
+      const cacheKey = CACHE_PREFIX + symbol;
+      let cacheItem = localStorage.getItem(cacheKey);
       if (cacheItem != null) {
         cacheItem = JSON.parse(cacheItem);
-        if (now - cacheItem.Date < ttl) // 5 minutes
-        {
+        if (now - cacheItem.Date < CACHE_TTL_MS) {
           result.push(cacheItem);
           symbols.splice(i, 1);
         } else {
-          localStorage.removeItem(symbol);
+          localStorage.removeItem(cacheKey);
         }
       }
     }
 
     let chunks = chunk(symbols, 50);
     let urls = [];
-    chunks.forEach((item, index, array) => {
+    chunks.forEach((item, index) => {
       let url = getUrl(chunks[index], fields);
       urls.push(fetchWithRetry(url));
     });
@@ -182,7 +211,7 @@ export class YahooFinanceLoader {
       let chunkData = response.data;
       chunkData.forEach((o) => {
         o.Date = now;
-        localStorage.setItem(o.symbol, JSON.stringify(o));
+        localStorage.setItem(CACHE_PREFIX + o.symbol, JSON.stringify(o));
         result.push(o);
       });
     });

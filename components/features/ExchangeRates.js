@@ -1,14 +1,21 @@
 import axios from 'axios';
 
+// 5 minute TTL, matches YahooFinanceLoader.
+const RATES_TTL_MS = 5 * 60 * 1000;
+
 class Cache {
   static Rates;
+  static FetchedAt;
 }
 
 // i.e: let rate = await GetRate('USD', 'EUR')
 export async function GetRate(from, to) {
   const url = process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL;
 
-  if (Cache.Rates == null) {
+  const isStale =
+    Cache.FetchedAt == null || Date.now() - Cache.FetchedAt >= RATES_TTL_MS;
+
+  if (Cache.Rates == null || isStale) {
     await axios.get(url).then((res) => {
       let parser = new DOMParser();
       let doc = parser.parseFromString(res.data, 'text/xml');
@@ -42,6 +49,7 @@ export async function GetRate(from, to) {
       result.push({ currency: 'EUR', rate: 1 });
 
       Cache.Rates = result;
+      Cache.FetchedAt = Date.now();
     });
   }
 
