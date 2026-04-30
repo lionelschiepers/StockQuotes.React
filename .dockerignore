@@ -1,12 +1,8 @@
 node_modules
-build
-dist
-local.settings.json
 .git
 .env*
 npm-debug.log
 .DS_Store
-api
 .vscode
 .github
 .next

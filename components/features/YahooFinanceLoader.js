@@ -54,8 +54,6 @@ export async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
   throw lastError;
 }
 
-// const anyCorsHttp = axios.create();
-
 function getUrl(quotes, fields) {
   if (!Array.isArray(quotes)) quotes = [quotes];
 
