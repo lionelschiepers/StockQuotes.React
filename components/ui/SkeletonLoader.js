@@ -1,21 +1,10 @@
 import React from 'react';
 
 const SkeletonLoader = () => {
-  const shimmerAnimation = `
-    @keyframes shimmer {
-      0% {
-        background-position: -200% 0;
-      }
-      100% {
-        background-position: 200% 0;
-      }
-    }
-  `;
-
   return (
     <div className="p-5 bg-white dark:bg-gray-900 rounded-lg">
       {/* Loading banner */}
-      <div className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 p-8 mb-5 rounded-lg font-bold text-lg min-h-[100px] flex items-center justify-center border border border-gray-200 dark:border-gray-600">
+      <div className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 p-8 mb-5 rounded-lg font-bold text-lg min-h-[100px] flex items-center justify-center border border-gray-200 dark:border-gray-600">
         Loading portfolio data
       </div>
 
@@ -37,9 +26,6 @@ const SkeletonLoader = () => {
           ></div>
         ))}
       </div>
-
-      {/* CSS for animations */}
-      <style dangerouslySetInnerHTML={{ __html: shimmerAnimation }} />
     </div>
   );
 };

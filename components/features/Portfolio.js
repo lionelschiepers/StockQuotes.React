@@ -149,10 +149,16 @@ export class Portfolio {
     await axios.get(url).then((res) => {
       const parsedCsv = papa.parse(res.data, { header: true }).data;
 
-      parsedCsv.forEach((data) => {
-        data.Shares = Math.abs(Number.parseFloat(data.Shares));
-        data.Price = Number.parseFloat(data.Price);
-        data.Commission = Number.parseFloat(data.Commission);
+      parsedCsv.forEach((rawRow) => {
+        // Work on a copy so the parsed input isn't mutated. The 'sell' branch
+        // below decrements `Shares`, which would corrupt the source on a
+        // re-parse otherwise.
+        const data = {
+          ...rawRow,
+          Shares: Math.abs(Number.parseFloat(rawRow.Shares)),
+          Price: Number.parseFloat(rawRow.Price),
+          Commission: Number.parseFloat(rawRow.Commission)
+        };
 
         let item = result.find((o) => o.Ticker === data.Symbol);
         if (item == null) {
@@ -166,25 +172,27 @@ export class Portfolio {
           case 'buy':
             item.NumberOfShares += data.Shares;
             item.MarketCost += data.Shares * data.Price + data.Commission;
-            item.Transactions.push(data);
+            item.Transactions.push({ ...data });
             break;
 
-          case 'sell':
-            // calculate past gain with last transactions.
-            while (data.Shares > 0) {
+          case 'sell': {
+            // Track remaining shares to sell locally; do not mutate `data`.
+            let remaining = data.Shares;
+            while (remaining > 0) {
               let lastTransaction =
                 item.Transactions[item.Transactions.length - 1];
-              let x = Math.min(lastTransaction.Shares, data.Shares);
+              let x = Math.min(lastTransaction.Shares, remaining);
               item.MarketCost -=
                 x * lastTransaction.Price + lastTransaction.Commission;
               item.NumberOfShares -= x;
               lastTransaction.Shares -= x;
-              data.Shares -= x;
+              remaining -= x;
               item.PastGain += x * (data.Price - lastTransaction.Price);
 
               if (lastTransaction.Shares === 0) item.Transactions.pop();
             }
             break;
+          }
 
           case 'deposit cash':
             item.PastGain += data.Commission;

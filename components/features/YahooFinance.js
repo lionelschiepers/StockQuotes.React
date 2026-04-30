@@ -30,7 +30,6 @@ const YahooFinance = () => {
 
     const loadPortfolio = async () => {
       setIsLoading(true);
-      const startTime = Date.now(); // Track when loading started
       try {
         const portfolioUri = `https://raw.githubusercontent.com/lionelschiepers/StockQuote.Portfolio/main/Portfolio/${encodeURIComponent(
           user.email
@@ -70,13 +69,7 @@ const YahooFinance = () => {
       } catch (error) {
         console.error('Failed to load portfolio:', error);
       } finally {
-        // Ensure skeleton shows for at least 2 seconds
-        const loadTime = Date.now() - startTime;
-        if (loadTime < 2000) {
-          setTimeout(() => setIsLoading(false), 2000 - loadTime);
-        } else {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 

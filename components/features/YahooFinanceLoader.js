@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-function chunk(array, size) {
+export function chunk(array, size) {
   const chunks = [];
   for (let i = 0; i < array.length; i += size) {
     chunks.push(array.slice(i, i + size));
@@ -10,7 +10,7 @@ function chunk(array, size) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
+export async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
   let lastError;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -18,18 +18,37 @@ async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
       return response;
     } catch (error) {
       lastError = error;
-      if (error.response?.status === 429) {
-        const retryAfter = error.response.headers['retry-after'];
-        const delay = retryAfter
-          ? parseInt(retryAfter, 10) * 1000
-          : baseDelay * Math.pow(2, attempt);
-        console.warn(
-          `Rate limited (429). Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`
-        );
-        await sleep(delay);
-      } else {
+      const status = error.response?.status;
+      const isRateLimit = status === 429;
+      const isServerError = status >= 500 && status < 600;
+      // No `response` typically means a network error (DNS failure, ECONNRESET,
+      // timeout, etc.) — those are worth retrying too.
+      const isNetworkError = error.response === undefined;
+      const shouldRetry = isRateLimit || isServerError || isNetworkError;
+
+      if (!shouldRetry || attempt === maxRetries - 1) {
         throw error;
       }
+
+      let delay;
+      if (isRateLimit) {
+        const retryAfter = error.response.headers['retry-after'];
+        delay = retryAfter
+          ? parseInt(retryAfter, 10) * 1000
+          : baseDelay * Math.pow(2, attempt);
+      } else {
+        delay = baseDelay * Math.pow(2, attempt);
+      }
+
+      const reason = isRateLimit
+        ? `Rate limited (429)`
+        : isServerError
+          ? `Server error (${status})`
+          : `Network error`;
+      console.warn(
+        `${reason}. Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`
+      );
+      await sleep(delay);
     }
   }
   throw lastError;
