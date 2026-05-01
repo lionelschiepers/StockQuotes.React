@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
-import Content from '../Content';
+import YahooFinance from '../YahooFinance';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from '../Portfolio';
 
 jest.mock('@auth0/auth0-react');
 jest.mock('../Portfolio');
 
-describe('Content', () => {
+describe('YahooFinance', () => {
   afterEach(() => {
     jest.clearAllMocks();
     jest.useRealTimers(); // Ensure real timers are restored after each test
@@ -31,7 +31,7 @@ describe('Content', () => {
 
     jest.useFakeTimers();
 
-    render(<Content />);
+    render(<YahooFinance />);
 
     // Initially, the skeleton loader should be visible
     expect(screen.getByText('Loading portfolio data')).toBeInTheDocument();
@@ -54,7 +54,7 @@ describe('Content', () => {
   it('renders the skeleton loader when portfolio data is still loading', () => {
     // Mock Portfolio.Load to return a pending promise
     Portfolio.Load.mockReturnValue(new Promise(() => {}));
-    render(<Content />);
+    render(<YahooFinance />);
     expect(screen.getByText('Loading portfolio data')).toBeInTheDocument();
   });
 });
