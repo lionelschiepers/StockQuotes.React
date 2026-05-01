@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useSyncExternalStore } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/global.css';
 import '../styles/YahooFinance.css';
 
@@ -21,22 +21,26 @@ const providerConfig = {
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
-// Subscribe-style helpers for useSyncExternalStore: read the `dark` class
-// that the inline boot script in _document.js already applied to <html>
-// before hydration, so React state matches the actual DOM without
-// recomputing localStorage / prefers-color-scheme on the client.
-const subscribeDarkClass = () => () => {};
-const getDarkSnapshot = () =>
-  document.documentElement.classList.contains('dark');
-const getDarkServerSnapshot = () => false;
+const getInitialDarkMode = () => {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+
+  const savedTheme = localStorage.getItem('theme');
+
+  if (savedTheme === 'dark') {
+    return true;
+  }
+
+  if (savedTheme === 'light') {
+    return false;
+  }
+
+  return document.documentElement.classList.contains('dark');
+};
 
 function MyApp({ Component, pageProps }) {
-  const initialDark = useSyncExternalStore(
-    subscribeDarkClass,
-    getDarkSnapshot,
-    getDarkServerSnapshot
-  );
-  const [darkMode, setDarkMode] = useState(initialDark);
+  const [darkMode, setDarkMode] = useState(getInitialDarkMode);
 
   // Apply dark mode class and persist preference whenever the user toggles.
   useEffect(() => {
