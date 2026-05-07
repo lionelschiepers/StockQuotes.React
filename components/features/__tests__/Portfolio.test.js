@@ -501,7 +501,7 @@ GOOG,Alphabet,Buy,5,150,2.5
 
     expect(axios.get).toHaveBeenCalledWith('http://test.csv');
     expect(papa.parse).toHaveBeenCalledWith(mockCsvData, { header: true });
-    expect(GetRate).toHaveBeenCalledTimes(2); // For MSFT and GOOG
+    expect(GetRate).toHaveBeenCalledTimes(1); // Shared USD rate is deduplicated
     expect(GetRate).toHaveBeenCalledWith('USD', 'EUR');
     expect(YahooFinanceLoader).toHaveBeenCalledTimes(1);
     expect(YahooFinanceLoader).toHaveBeenCalledWith(); // Check if constructor was called

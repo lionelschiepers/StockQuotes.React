@@ -85,17 +85,35 @@ export class SecurityPostion {
 }
 
 export class CurrencyHelper {
+  static getCurrencyFromTicker(ticker) {
+    if (!ticker.includes('.')) return 'USD';
+    if (ticker.endsWith('.SW')) return 'CHF';
+    if (ticker.endsWith('.L')) return 'GBp';
+    if (ticker.endsWith('.OL')) return 'NOK';
+    return 'EUR';
+  }
+
   // sets currency of positions using market.
   static async updateCurrency(positions) {
-    for (const position of positions) {
-      if (!position.Ticker.includes('.')) position.Currency = 'USD';
-      else if (position.Ticker.endsWith('.SW')) position.Currency = 'CHF';
-      else if (position.Ticker.endsWith('.L')) position.Currency = 'GBp';
-      else if (position.Ticker.endsWith('.OL')) position.Currency = 'NOK';
-      else position.Currency = 'EUR';
+    const currencies = new Set();
 
-      position.RateToEUR = await GetRate(position.Currency, 'EUR');
-    }
+    positions.forEach((position) => {
+      const currency = CurrencyHelper.getCurrencyFromTicker(position.Ticker);
+      position.Currency = currency;
+      currencies.add(currency);
+    });
+
+    const rates = await Promise.all(
+      Array.from(currencies).map(async (currency) => {
+        const rate = await GetRate(currency, 'EUR');
+        return [currency, rate];
+      })
+    );
+
+    const ratesByCurrency = new Map(rates);
+    positions.forEach((position) => {
+      position.RateToEUR = ratesByCurrency.get(position.Currency);
+    });
   }
 }
 
