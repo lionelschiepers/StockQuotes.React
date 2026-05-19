@@ -22,7 +22,7 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 const getInitialDarkMode = () => {
-  if (typeof window === 'undefined') {
+  if (globalThis.window === undefined) {
     return true;
   }
 

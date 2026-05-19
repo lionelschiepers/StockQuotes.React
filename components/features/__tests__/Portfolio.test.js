@@ -1,4 +1,4 @@
-import { Portfolio, SecurityPostion, CurrencyHelper } from '../Portfolio';
+import { Portfolio, SecurityPosition, CurrencyHelper } from '../Portfolio';
 import axios from 'axios';
 import papa from 'papaparse';
 import { GetRate } from '../ExchangeRates';
@@ -9,11 +9,11 @@ jest.mock('papaparse');
 jest.mock('../ExchangeRates');
 jest.mock('../YahooFinanceLoader');
 
-describe('SecurityPostion', () => {
+describe('SecurityPosition', () => {
   let securityPosition;
 
   beforeEach(() => {
-    securityPosition = new SecurityPostion();
+    securityPosition = new SecurityPosition();
     securityPosition.Ticker = 'TEST.TICKER';
     securityPosition.NumberOfShares = 10;
     securityPosition.MarketCost = 100;

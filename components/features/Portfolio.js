@@ -3,7 +3,7 @@ import axios from 'axios';
 import { GetRate } from './ExchangeRates';
 import { YahooFinanceLoader, YahooFinanceFields } from './YahooFinanceLoader';
 
-export class SecurityPostion {
+export class SecurityPosition {
   Ticker;
   Market;
   NumberOfShares = 0;
@@ -210,7 +210,7 @@ export class Portfolio {
 
         let item = result.find((o) => o.Ticker === data.Symbol);
         if (item == null) {
-          item = new SecurityPostion();
+          item = new SecurityPosition();
           item.Ticker = data.Symbol;
           item.Name = data.Name;
           result.push(item);

@@ -151,7 +151,7 @@ const CACHE_PREFIX = 'yh:';
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 function pruneExpired(now) {
-  if (typeof localStorage === 'undefined') return;
+  if (globalThis.localStorage === undefined) return;
   // Snapshot the keys first because we mutate localStorage inside the loop.
   const keys = [];
   for (let i = 0; i < localStorage.length; i++) {
