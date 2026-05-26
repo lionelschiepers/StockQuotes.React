@@ -164,18 +164,16 @@ const YahooFinance = () => {
     []
   );
 
-  // Helper function to format values in K€ with French dot separators
+  // Helper function to format values in K€ with browser-native locale
   const formatInKEur = useCallback((value) => {
     if (value == null || Number.isNaN(value)) return '';
     const kValue = value / 1000;
-    // Format with French locale and replace spaces with dots, then add K€
+    const locale = typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
     return (
-      kValue
-        .toLocaleString('fr-FR', {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0
-        })
-        .replace(' ', '.') + ' K€'
+      kValue.toLocaleString(locale, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }) + ' K€'
     );
   }, []);
 
@@ -225,8 +223,10 @@ const YahooFinance = () => {
   const formatDisplayValue = useCallback((value, dataKey) => {
     if (value == null) return '';
 
+    const locale = typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
+
     if (dataKey === 'Security.regularMarketPrice') {
-      return value.toLocaleString('fr-FR', {
+      return value.toLocaleString(locale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
@@ -238,14 +238,14 @@ const YahooFinance = () => {
       dataKey === 'Gain';
 
     if (shouldRemoveDecimals) {
-      return Math.round(value).toLocaleString('fr-FR');
+      return Math.round(value).toLocaleString(locale);
     } else if (dataKey === 'Diff' || dataKey === 'GainPercent') {
-      return value.toLocaleString('fr-FR', {
+      return value.toLocaleString(locale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
     } else {
-      return value.toLocaleString('fr-FR', {
+      return value.toLocaleString(locale, {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2
       });
@@ -275,8 +275,19 @@ const YahooFinance = () => {
 
       const displayValue = formatDisplayValue(cellData, dataKey);
 
+      let colorClass = 'text-gray-900 dark:text-white';
+      if (['Diff', 'Gain', 'GainPercent', 'PastGain'].includes(dataKey)) {
+        if (cellData > 0) {
+          colorClass = 'text-emerald-600 dark:text-emerald-400 font-semibold';
+        } else if (cellData < 0) {
+          colorClass = 'text-rose-600 dark:text-rose-400 font-semibold';
+        } else {
+          colorClass = 'text-gray-500 dark:text-gray-400';
+        }
+      }
+
       return (
-        <div className="dark:text-white">
+        <div className={colorClass}>
           {displayValue} {postData}
         </div>
       );
@@ -357,8 +368,14 @@ const YahooFinance = () => {
             </div>
             <div className="text-gray-900 dark:text-white">
               Total Gain:&nbsp;{/* prettier-ignore */}
-              <span className="font-semibold">
-                {(gain * 100).toLocaleString('fr-FR', {
+              <span className={`font-semibold ${
+                gain > 0
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : gain < 0
+                    ? 'text-rose-600 dark:text-rose-400'
+                    : 'text-gray-500 dark:text-gray-400'
+              }`}>
+                {(gain * 100).toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
@@ -367,8 +384,14 @@ const YahooFinance = () => {
             </div>
             <div className="text-gray-900 dark:text-white">
               Day diff:&nbsp;{/* prettier-ignore */}
-              <span className="font-semibold">
-                {(dayDiff * 100).toLocaleString('fr-FR', {
+              <span className={`font-semibold ${
+                dayDiff > 0
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : dayDiff < 0
+                    ? 'text-rose-600 dark:text-rose-400'
+                    : 'text-gray-500 dark:text-gray-400'
+              }`}>
+                {(dayDiff * 100).toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
@@ -378,13 +401,19 @@ const YahooFinance = () => {
             <div className="text-gray-900 dark:text-white">
               {/* prettier-ignore */}
               Past Gain:&nbsp;
-              <span className="font-semibold">{formatInKEur(pastGain)}</span>
+              <span className={`font-semibold ${
+                pastGain > 0
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : pastGain < 0
+                    ? 'text-rose-600 dark:text-rose-400'
+                    : 'text-gray-500 dark:text-gray-400'
+              }`}>{formatInKEur(pastGain)}</span>
             </div>
             <div className="text-gray-900 dark:text-white">
               {/* prettier-ignore */}
               Dividend Yield:&nbsp;
               <span className="font-semibold">
-                {dividendYield.toLocaleString('fr-FR', {
+                {dividendYield.toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
@@ -434,7 +463,7 @@ const YahooFinance = () => {
         <div className="flex font-bold border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 350px', minWidth: '200px' }}
             onClick={createSortHandler('Name')}
             onKeyDown={handleKeyDown(createSortHandler('Name'))}
@@ -443,7 +472,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 110px', minWidth: '70px' }}
             onClick={createSortHandler('Security.regularMarketPrice')}
             onKeyDown={handleKeyDown(
@@ -454,7 +483,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 80px', minWidth: '70px' }}
             onClick={createSortHandler('Diff')}
             onKeyDown={handleKeyDown(createSortHandler('Diff'))}
@@ -463,7 +492,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 80px', minWidth: '70px' }}
             onClick={createSortHandler('NumberOfShares')}
             onKeyDown={handleKeyDown(createSortHandler('NumberOfShares'))}
@@ -472,7 +501,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 120px', minWidth: '100px' }}
             onClick={createSortHandler('MarketCost')}
             onKeyDown={handleKeyDown(createSortHandler('MarketCost'))}
@@ -481,7 +510,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 130px', minWidth: '100px' }}
             onClick={createSortHandler('MarketPrice')}
             onKeyDown={handleKeyDown(createSortHandler('MarketPrice'))}
@@ -490,7 +519,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 90px', minWidth: '90px' }}
             onClick={createSortHandler('Gain')}
             onKeyDown={handleKeyDown(createSortHandler('Gain'))}
@@ -499,7 +528,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 90px', minWidth: '90px' }}
             onClick={createSortHandler('GainPercent')}
             onKeyDown={handleKeyDown(createSortHandler('GainPercent'))}
@@ -508,7 +537,7 @@ const YahooFinance = () => {
           </button>
           <button
             type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
             style={{ flex: '0 0 120px', minWidth: '100px' }}
             onClick={createSortHandler('PastGain')}
             onKeyDown={handleKeyDown(createSortHandler('PastGain'))}
