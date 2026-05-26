@@ -12,6 +12,7 @@ const providerConfig = {
   domain: config.domain,
   clientId: config.clientId,
   ...(config.audience ? { audience: config.audience } : null),
+  cacheLocation: 'localstorage',
   authorizationParams: {
     redirect_uri:
       globalThis.window === undefined ? '' : globalThis.window.location.origin

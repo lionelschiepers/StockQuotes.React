@@ -145,6 +145,16 @@ export const YahooFinanceFields = {
     */
 };
 
+export async function fetchStockOptions(symbol) {
+  const baseUrl = process.env.NEXT_PUBLIC_YAHOO_OPTIONS_URL;
+  if (!baseUrl) {
+    throw new Error('Option URL is not configured in .env');
+  }
+  const url = `${baseUrl}?ticker=${encodeURIComponent(symbol)}&limit=32&expirationDatesCount=24`;
+  const response = await fetchWithRetry(url);
+  return response.data;
+}
+
 // Namespaced cache key prefix so we can identify (and prune) our own entries
 // in localStorage without colliding with anything else the SPA stores.
 const CACHE_PREFIX = 'yh:';

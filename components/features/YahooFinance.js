@@ -6,6 +6,7 @@ import { CSVLink } from 'react-csv';
 import SkeletonLoader from '../ui/SkeletonLoader';
 
 import YahooFinanceRow from './YahooFinanceRow';
+import YahooFinanceOptionsModal from './YahooFinanceOptionsModal';
 
 const YahooFinance = () => {
   const { isAuthenticated, user } = useAuth0();
@@ -23,6 +24,8 @@ const YahooFinance = () => {
   const [displayInEUR, setDisplayInEUR] = useState(false);
   const [filterZeroShares, setFilterZeroShares] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedOptionSymbol, setSelectedOptionSymbol] = useState(null);
+  const [selectedOptionPrice, setSelectedOptionPrice] = useState(null);
 
   // Load portfolio data when component mounts or user changes
   useEffect(() => {
@@ -298,14 +301,30 @@ const YahooFinance = () => {
   // Name rendering function
   const renderName = useCallback((rowData) => {
     return (
-      <a
-        className="text-gray-900 dark:text-white"
-        target="_blank"
-        rel="noopener noreferrer"
-        href={`https://finance.yahoo.com/quote/${rowData.Ticker}`}
-      >
-        {rowData.Name}
-      </a>
+      <div className="flex items-center justify-between w-full">
+        <a
+          className="text-gray-900 dark:text-white truncate pr-2 hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://finance.yahoo.com/quote/${rowData.Ticker}`}
+          title={rowData.Name}
+        >
+          {rowData.Name}
+        </a>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setSelectedOptionSymbol(rowData.Ticker);
+            setSelectedOptionPrice(rowData.Security?.regularMarketPrice);
+          }}
+          type="button"
+          className="cursor-pointer shrink-0 ml-auto px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950 dark:hover:bg-blue-900 dark:text-blue-400 border border-blue-200 dark:border-blue-800 transition"
+          title={`View options chain for ${rowData.Ticker}`}
+        >
+          ⌥ Options
+        </button>
+      </div>
     );
   }, []);
 
@@ -339,12 +358,15 @@ const YahooFinance = () => {
   const createSortHandler = useCallback(
     (field) => {
       return () => {
-        const newDirection =
-          sortBy === field && sortDirection === 'ASC' ? 'DESC' : 'ASC';
-        handleSort({ sortBy: field, sortDirection: newDirection });
+        setSortBy((prevSortBy) => {
+          setSortDirection((prevSortDirection) => {
+            return prevSortBy === field && prevSortDirection === 'ASC' ? 'DESC' : 'ASC';
+          });
+          return field;
+        });
       };
     },
-    [sortBy, sortDirection, handleSort]
+    []
   );
 
   const csvData = portfolio;
@@ -561,6 +583,15 @@ const YahooFinance = () => {
           }}
         />
       </div>
+      <YahooFinanceOptionsModal
+        isOpen={Boolean(selectedOptionSymbol)}
+        symbol={selectedOptionSymbol}
+        currentPrice={selectedOptionPrice}
+        onClose={() => {
+          setSelectedOptionSymbol(null);
+          setSelectedOptionPrice(null);
+        }}
+      />
     </main>
   );
 };

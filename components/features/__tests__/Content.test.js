@@ -26,15 +26,15 @@ describe('YahooFinance', () => {
   });
 
   it('renders the skeleton loader initially and then the portfolio content', async () => {
-    // Mock Portfolio.Load to resolve after a delay
-    Portfolio.Load.mockResolvedValue([]);
+    // Mock Portfolio.Load to resolve after a delay to ensure loading state renders
+    Portfolio.Load.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([]), 50)));
 
     jest.useFakeTimers();
 
     render(<YahooFinance />);
 
     // Initially, the skeleton loader should be visible
-    expect(screen.getByText('Loading portfolio data')).toBeInTheDocument();
+    expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
 
     // Advance timers past the minimum loading time (2000ms)
     await act(async () => {
@@ -47,7 +47,7 @@ describe('YahooFinance', () => {
     expect(screen.getByText('Market Price:')).toBeInTheDocument();
     // The skeleton loader should no longer be in the document
     expect(
-      screen.queryByText('Loading portfolio data')
+      document.querySelector('.animate-pulse')
     ).not.toBeInTheDocument();
   });
 
@@ -55,6 +55,6 @@ describe('YahooFinance', () => {
     // Mock Portfolio.Load to return a pending promise
     Portfolio.Load.mockReturnValue(new Promise(() => {}));
     render(<YahooFinance />);
-    expect(screen.getByText('Loading portfolio data')).toBeInTheDocument();
+    expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
   });
 });
