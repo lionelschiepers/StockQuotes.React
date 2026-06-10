@@ -171,7 +171,8 @@ const YahooFinance = () => {
   const formatInKEur = useCallback((value) => {
     if (value == null || Number.isNaN(value)) return '';
     const kValue = value / 1000;
-    const locale = typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
+    const locale =
+      typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
     return (
       kValue.toLocaleString(locale, {
         minimumFractionDigits: 0,
@@ -226,7 +227,8 @@ const YahooFinance = () => {
   const formatDisplayValue = useCallback((value, dataKey) => {
     if (value == null) return '';
 
-    const locale = typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
+    const locale =
+      typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
 
     if (dataKey === 'Security.regularMarketPrice') {
       return value.toLocaleString(locale, {
@@ -355,19 +357,18 @@ const YahooFinance = () => {
   };
 
   // Create sort handler for each column
-  const createSortHandler = useCallback(
-    (field) => {
-      return () => {
-        setSortBy((prevSortBy) => {
-          setSortDirection((prevSortDirection) => {
-            return prevSortBy === field && prevSortDirection === 'ASC' ? 'DESC' : 'ASC';
-          });
-          return field;
+  const createSortHandler = useCallback((field) => {
+    return () => {
+      setSortBy((prevSortBy) => {
+        setSortDirection((prevSortDirection) => {
+          return prevSortBy === field && prevSortDirection === 'ASC'
+            ? 'DESC'
+            : 'ASC';
         });
-      };
-    },
-    []
-  );
+        return field;
+      });
+    };
+  }, []);
 
   const csvData = portfolio;
 
@@ -423,22 +424,31 @@ const YahooFinance = () => {
             <div className="text-gray-900 dark:text-white">
               {/* prettier-ignore */}
               Past Gain:&nbsp;
-              <span className={`font-semibold ${
-                pastGain > 0
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : pastGain < 0
-                    ? 'text-rose-600 dark:text-rose-400'
-                    : 'text-gray-500 dark:text-gray-400'
-              }`}>{formatInKEur(pastGain)}</span>
+              <span
+                className={`font-semibold ${
+                  pastGain > 0
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : pastGain < 0
+                      ? 'text-rose-600 dark:text-rose-400'
+                      : 'text-gray-500 dark:text-gray-400'
+                }`}
+              >
+                {formatInKEur(pastGain)}
+              </span>
             </div>
             <div className="text-gray-900 dark:text-white">
               {/* prettier-ignore */}
               Dividend Yield:&nbsp;
               <span className="font-semibold">
-                {dividendYield.toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
+                {dividendYield.toLocaleString(
+                  typeof navigator !== 'undefined'
+                    ? navigator.language
+                    : 'fr-FR',
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }
+                )}
               </span>
               <span> (</span>
               <span className="font-semibold">
@@ -481,7 +491,7 @@ const YahooFinance = () => {
           </span>
         </label>
       </div>
-      <div className="yahoo-finance-table-wrapper">
+      <div className="yahoo-finance-table-wrapper yahoo-finance-header-wrapper">
         <div className="flex font-bold border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
           <button
             type="button"

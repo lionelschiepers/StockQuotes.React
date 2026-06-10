@@ -68,14 +68,14 @@ div.stockName {
 }
 
 /* Header row responsive styling */
-.yahoo-finance-container > div:nth-of-type(3) {
+.yahoo-finance-header-wrapper {
   display: flex;
   min-width: max-content;
   overflow-x: auto;
 }
 
 /* Ensure headers and rows align */
-.yahoo-finance-container > div:nth-of-type(3) > div,
+.yahoo-finance-header-wrapper > div,
 .yahoo-finance-container .react-window-list > div > div {
   flex-shrink: 0;
 }

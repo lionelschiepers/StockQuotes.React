@@ -25,72 +25,153 @@ const SkeletonLoader = () => {
         <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
       </div>
 
-      <div className="yahoo-finance-table-wrapper">
-        <div 
-          className="flex font-bold border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
-        >
-          <div style={{ flex: '0 0 350px', minWidth: '200px' }} className="px-2 py-1">
+      <div className="yahoo-finance-table-wrapper yahoo-finance-header-wrapper">
+        <div className="flex font-bold border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
+          <div
+            style={{ flex: '0 0 350px', minWidth: '200px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 110px', minWidth: '70px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 110px', minWidth: '70px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 80px', minWidth: '70px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 80px', minWidth: '70px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 80px', minWidth: '70px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 80px', minWidth: '70px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 120px', minWidth: '100px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 120px', minWidth: '100px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 130px', minWidth: '100px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 130px', minWidth: '100px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 90px', minWidth: '90px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 90px', minWidth: '90px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 90px', minWidth: '90px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 90px', minWidth: '90px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-14 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
-          <div style={{ flex: '0 0 120px', minWidth: '100px' }} className="px-2 py-1">
+          <div
+            style={{ flex: '0 0 120px', minWidth: '100px' }}
+            className="px-2 py-1"
+          >
             <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           </div>
         </div>
+      </div>
 
+      <div className="yahoo-finance-table-wrapper">
         <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
             <div
               key={i}
               className="flex items-center"
-              style={{ height: '32px' }}
+              style={{ height: '32px', minWidth: 'max-content' }}
             >
-              <div style={{ flex: '0 0 350px', minWidth: '200px' }} className="px-2">
-                <div className="h-3 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 350px', minWidth: '200px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 110px', minWidth: '70px' }} className="px-2">
-                <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 110px', minWidth: '70px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 80px', minWidth: '70px' }} className="px-2">
-                <div className="h-3 w-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 80px', minWidth: '70px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 80px', minWidth: '70px' }} className="px-2">
-                <div className="h-3 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 80px', minWidth: '70px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 120px', minWidth: '100px' }} className="px-2">
-                <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 120px', minWidth: '100px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 130px', minWidth: '100px' }} className="px-2">
-                <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 130px', minWidth: '100px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 90px', minWidth: '90px' }} className="px-2">
-                <div className="h-3 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 90px', minWidth: '90px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 90px', minWidth: '90px' }} className="px-2">
-                <div className="h-3 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 90px', minWidth: '90px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
-              <div style={{ flex: '0 0 120px', minWidth: '100px' }} className="px-2">
-                <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: `${i * 0.03}s` }}></div>
+              <div
+                style={{ flex: '0 0 120px', minWidth: '100px' }}
+                className="px-2"
+              >
+                <div
+                  className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                ></div>
               </div>
             </div>
           ))}
