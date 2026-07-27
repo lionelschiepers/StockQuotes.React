@@ -12,8 +12,6 @@ const YahooFinanceOptionsModal = ({ isOpen, onClose, symbol, currentPrice }) => 
 
   useEffect(() => {
     if (!isOpen || !symbol) {
-      setOptionsData(null);
-      setSelectedExpiration('');
       return;
     }
 
