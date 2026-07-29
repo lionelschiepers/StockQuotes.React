@@ -20,19 +20,21 @@ export class SecurityPosition {
   Security; // price of one share
 
   getTaxeRate() {
-    if (!this.Ticker.includes('.')) return 0.85 * 0.7;
-    else if (this.Ticker.endsWith('.BR')) return 0.7;
-    else if (this.Ticker.endsWith('.VX')) return 0.65 * 0.7;
-    else if (this.Ticker.endsWith('.ST')) return 0.7 * 0.7;
-    else if (this.Ticker.endsWith('.DE')) return 0.7362 * 0.7;
-    else if (this.Ticker.endsWith('.CA')) return 0.75 * 0.7;
-    else if (this.Ticker.endsWith('.HE')) return 0.8 * 0.7;
-    else if (this.Ticker.endsWith('.LU')) return 0.85 * 0.7;
-    else if (this.Ticker.endsWith('.AS')) return 0.85 * 0.7;
-    else if (this.Ticker.endsWith('.PA')) return 0.872 * 0.7;
-    else if (this.Ticker.endsWith('.L')) return 0.7;
-    else if (this.Ticker.endsWith('.MC')) return 0.81 * 0.7;
-    else return 0.7; // at least belgian taxes
+    if (this.Ticker.includes('.')) {
+      if (this.Ticker.endsWith('.BR')) return 0.7;
+      if (this.Ticker.endsWith('.VX')) return 0.65 * 0.7;
+      if (this.Ticker.endsWith('.ST')) return 0.7 * 0.7;
+      if (this.Ticker.endsWith('.DE')) return 0.7362 * 0.7;
+      if (this.Ticker.endsWith('.CA')) return 0.75 * 0.7;
+      if (this.Ticker.endsWith('.HE')) return 0.8 * 0.7;
+      if (this.Ticker.endsWith('.LU')) return 0.85 * 0.7;
+      if (this.Ticker.endsWith('.AS')) return 0.85 * 0.7;
+      if (this.Ticker.endsWith('.PA')) return 0.872 * 0.7;
+      if (this.Ticker.endsWith('.L')) return 0.7;
+      if (this.Ticker.endsWith('.MC')) return 0.81 * 0.7;
+      return 0.7; // at least belgian taxes
+    }
+    return 0.85 * 0.7;
   }
 
   getDividendYield(inEur = false) {
