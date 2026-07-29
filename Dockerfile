@@ -2,6 +2,8 @@
 
 FROM node:lts-alpine AS builder
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # if API is behind a reverse proxy, use relative URLs
 ENV NEXT_PUBLIC_EXCHANGE_RATES_URL=api/exchange-rate-ecb
 ENV NEXT_PUBLIC_YAHOO_URL=api/yahoo-finance
@@ -17,17 +19,16 @@ ENV NEXT_PUBLIC_AUTH0_CLIENT_ID=IRO3ziJRgAvy03EjWdXpvrUgkdh9ameo
 
 WORKDIR /app
 
-# copy both package.json and package-lock.json to leverage layer cache & reproducible installs
-COPY package*.json ./
+# copy both package.json and pnpm-lock.yaml to leverage layer cache & reproducible installs
+COPY package.json pnpm-lock.yaml ./
 
-# prefer npm ci when a lockfile exists (faster, deterministic)
-RUN if [ -f package-lock.json ]; then npm ci --ignore-scripts; else npm install --ignore-scripts; fi
+RUN pnpm install --frozen-lockfile --ignore-scripts
 # RUN npm audit fix
 
 COPY . .
 
 # build with full dependencies present
-RUN npm run build
+RUN pnpm build
 
 FROM nginx:alpine AS production
 
