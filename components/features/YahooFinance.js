@@ -8,6 +8,16 @@ import SkeletonLoader from '../ui/SkeletonLoader';
 import YahooFinanceRow from './YahooFinanceRow';
 import YahooFinanceOptionsModal from './YahooFinanceOptionsModal';
 
+function getGainColorClass(value) {
+  if (value > 0) {
+    return 'text-emerald-600 dark:text-emerald-400';
+  }
+  if (value < 0) {
+    return 'text-rose-600 dark:text-rose-400';
+  }
+  return 'text-gray-500 dark:text-gray-400';
+}
+
 const YahooFinance = () => {
   const { isAuthenticated, user } = useAuth0();
 
@@ -383,13 +393,7 @@ const YahooFinance = () => {
             </div>
             <div className="text-gray-900 dark:text-white">
               Total Gain:&nbsp;{/* prettier-ignore */}
-              <span className={`font-semibold ${
-                gain > 0
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : gain < 0
-                    ? 'text-rose-600 dark:text-rose-400'
-                    : 'text-gray-500 dark:text-gray-400'
-              }`}>
+              <span className={`font-semibold ${getGainColorClass(gain)}`}>
                 {(gain * 100).toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
@@ -399,13 +403,7 @@ const YahooFinance = () => {
             </div>
             <div className="text-gray-900 dark:text-white">
               Day diff:&nbsp;{/* prettier-ignore */}
-              <span className={`font-semibold ${
-                dayDiff > 0
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : dayDiff < 0
-                    ? 'text-rose-600 dark:text-rose-400'
-                    : 'text-gray-500 dark:text-gray-400'
-              }`}>
+              <span className={`font-semibold ${getGainColorClass(dayDiff)}`}>
                 {(dayDiff * 100).toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
@@ -416,15 +414,7 @@ const YahooFinance = () => {
             <div className="text-gray-900 dark:text-white">
               {/* prettier-ignore */}
               Past Gain:&nbsp;
-              <span
-                className={`font-semibold ${
-                  pastGain > 0
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : pastGain < 0
-                      ? 'text-rose-600 dark:text-rose-400'
-                      : 'text-gray-500 dark:text-gray-400'
-                }`}
-              >
+              <span className={`font-semibold ${getGainColorClass(pastGain)}`}>
                 {formatInKEur(pastGain)}
               </span>
             </div>
