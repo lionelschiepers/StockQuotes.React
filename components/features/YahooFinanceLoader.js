@@ -10,41 +10,60 @@ export function chunk(array, size) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Classifies an axios error so callers can decide whether a retry is worthwhile.
+function classifyRetryableError(error) {
+  const status = error.response?.status;
+  const isRateLimit = status === 429;
+  const isServerError = status >= 500 && status < 600;
+  // No `response` typically means a network error (DNS failure, ECONNRESET,
+  // timeout, etc.) — those are worth retrying too.
+  const isNetworkError = error.response === undefined;
+  return {
+    status,
+    isRateLimit,
+    isServerError,
+    isNetworkError,
+    shouldRetry: isRateLimit || isServerError || isNetworkError
+  };
+}
+
+function computeRetryDelay(error, classification, baseDelay, attempt) {
+  if (!classification.isRateLimit) {
+    return baseDelay * Math.pow(2, attempt);
+  }
+  const retryAfter = error.response.headers['retry-after'];
+  return retryAfter
+    ? Number.parseInt(retryAfter, 10) * 1000
+    : baseDelay * Math.pow(2, attempt);
+}
+
+function describeRetryReason(classification) {
+  if (classification.isRateLimit) return 'Rate limited (429)';
+  if (classification.isServerError)
+    return `Server error (${classification.status})`;
+  return 'Network error';
+}
+
 export async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
   let lastError;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      const response = await axios.get(url);
-      return response;
+      return await axios.get(url);
     } catch (error) {
       lastError = error;
-      const status = error.response?.status;
-      const isRateLimit = status === 429;
-      const isServerError = status >= 500 && status < 600;
-      // No `response` typically means a network error (DNS failure, ECONNRESET,
-      // timeout, etc.) — those are worth retrying too.
-      const isNetworkError = error.response === undefined;
-      const shouldRetry = isRateLimit || isServerError || isNetworkError;
+      const classification = classifyRetryableError(error);
 
-      if (!shouldRetry || attempt === maxRetries - 1) {
+      if (!classification.shouldRetry || attempt === maxRetries - 1) {
         throw error;
       }
 
-      let delay;
-      if (isRateLimit) {
-        const retryAfter = error.response.headers['retry-after'];
-        delay = retryAfter
-          ? parseInt(retryAfter, 10) * 1000
-          : baseDelay * Math.pow(2, attempt);
-      } else {
-        delay = baseDelay * Math.pow(2, attempt);
-      }
-
-      const reason = isRateLimit
-        ? `Rate limited (429)`
-        : isServerError
-          ? `Server error (${status})`
-          : `Network error`;
+      const delay = computeRetryDelay(
+        error,
+        classification,
+        baseDelay,
+        attempt
+      );
+      const reason = describeRetryReason(classification);
       console.warn(
         `${reason}. Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`
       );
@@ -166,7 +185,7 @@ function pruneExpired(now) {
   const keys = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && key.startsWith(CACHE_PREFIX)) keys.push(key);
+    if (key?.startsWith(CACHE_PREFIX)) keys.push(key);
   }
   for (const key of keys) {
     try {

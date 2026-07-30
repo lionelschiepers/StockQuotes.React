@@ -159,14 +159,6 @@ const YahooFinance = () => {
     return internalSort(filteredData, sortBy, sortDirection);
   }, [filterZeroShares, portfolio, sortBy, sortDirection, internalSort]);
 
-  const handleSort = useCallback(
-    ({ sortBy: sortByField, sortDirection: direction }) => {
-      setSortBy(sortByField);
-      setSortDirection(direction);
-    },
-    []
-  );
-
   // Helper function to format values in K€ with browser-native locale
   const formatInKEur = useCallback((value) => {
     if (value == null || Number.isNaN(value)) return '';
