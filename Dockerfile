@@ -19,8 +19,8 @@ ENV NEXT_PUBLIC_AUTH0_CLIENT_ID=IRO3ziJRgAvy03EjWdXpvrUgkdh9ameo
 
 WORKDIR /app
 
-# copy both package.json and pnpm-lock.yaml to leverage layer cache & reproducible installs
-COPY package.json pnpm-lock.yaml ./
+# copy package.json, pnpm-lock.yaml and pnpm-workspace.yaml (holds pnpm overrides) to leverage layer cache & reproducible installs
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
 # RUN npm audit fix
