@@ -196,15 +196,11 @@ export class Portfolio {
         const commission = Number.parseFloat(rawRow.Commission);
 
         const type = rawRow.Type.toLowerCase();
-        // Shares/Price are mandatory for buy & sell. Commission is the only
-        // numeric field that matters for "deposit cash" rows.
+        // Shares/Price are mandatory for buy & sell.
         if (
           (type === 'buy' || type === 'sell') &&
           (Number.isNaN(shares) || Number.isNaN(price))
         ) {
-          return;
-        }
-        if (type === 'deposit cash' && Number.isNaN(commission)) {
           return;
         }
 
@@ -251,10 +247,6 @@ export class Portfolio {
             }
             break;
           }
-
-          case 'deposit cash':
-            item.PastGain += data.Commission;
-            break;
 
           default:
             break;

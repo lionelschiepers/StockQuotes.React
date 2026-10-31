@@ -574,45 +574,6 @@ MSFT,Microsoft,Sell,5,120,3
     expect(msftPosition.Transactions[0].Shares).toBe(5);
   });
 
-  it('should handle deposit cash transactions correctly', async () => {
-    const csvWithDeposit = `
-Ticker,Name,Type,Shares,Price,Commission
-MSFT,Microsoft,Buy,10,100,5
-MSFT,Microsoft,Deposit Cash,0,0,100
-`;
-    const parsedCsvWithDeposit = [
-      {
-        Symbol: 'MSFT',
-        Name: 'Microsoft',
-        Type: 'Buy',
-        Shares: '10',
-        Price: '100',
-        Commission: '5'
-      },
-      {
-        Symbol: 'MSFT',
-        Name: 'Microsoft',
-        Type: 'Deposit Cash',
-        Shares: '0',
-        Price: '0',
-        Commission: '100'
-      }
-    ];
-
-    axios.get.mockResolvedValueOnce({ data: csvWithDeposit });
-    papa.parse.mockReturnValueOnce({ data: parsedCsvWithDeposit });
-    GetRate.mockResolvedValue(0.85);
-
-    const portfolio = await Portfolio.Load('http://test.csv');
-
-    expect(portfolio.length).toBe(1);
-    const msftPosition = portfolio[0];
-
-    // PastGain should include the deposit cash commission
-    expect(msftPosition.PastGain).toBe(100);
-    expect(msftPosition.NumberOfShares).toBe(10);
-  });
-
   it('should handle unknown transaction types gracefully', async () => {
     const csvWithUnknown = `
 Ticker,Name,Type,Shares,Price,Commission
