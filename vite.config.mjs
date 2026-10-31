@@ -6,7 +6,12 @@ import tailwindcss from '@tailwindcss/vite';
 
 // GitHub Pages (via actions/configure-pages) passes e.g. "/StockQuotes.React"
 // or "" for a custom domain; Vite expects a trailing slash.
-const base = `${(process.env.PAGES_BASE_PATH ?? '').replace(/\/+$/, '')}/`;
+const trimTrailingSlashes = (value) => {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === '/') end--;
+  return value.slice(0, end);
+};
+const base = `${trimTrailingSlashes(process.env.PAGES_BASE_PATH ?? '')}/`;
 
 // GitHub Pages has no SPA fallback: serving the app shell as 404.html lets
 // deep links such as /profile/ boot the router instead of showing a 404 page.

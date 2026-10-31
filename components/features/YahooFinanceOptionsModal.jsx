@@ -227,6 +227,19 @@ const YahooFinanceOptionsModal = ({
     };
   }, [isOpen]);
 
+  // A click whose target is the dialog itself landed on the backdrop. Escape
+  // is the keyboard equivalent and is handled through onCancel.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!isOpen || !dialog) return undefined;
+
+    const closeOnBackdropClick = (event) => {
+      if (event.target === dialog) onClose();
+    };
+    dialog.addEventListener('click', closeOnBackdropClick);
+    return () => dialog.removeEventListener('click', closeOnBackdropClick);
+  }, [isOpen, onClose]);
+
   useEffect(() => {
     if (!isOpen || !symbol) return undefined;
 
@@ -246,7 +259,7 @@ const YahooFinanceOptionsModal = ({
       }
     };
 
-    loadOptions();
+    void loadOptions();
     return () => {
       cancelled = true;
     };
@@ -384,9 +397,6 @@ const YahooFinanceOptionsModal = ({
       onCancel={(event) => {
         event.preventDefault();
         onClose();
-      }}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) onClose();
       }}
       className="m-0 h-dvh max-h-none w-full max-w-none bg-sheet p-0 text-ink md:m-auto md:h-[85vh] md:max-w-5xl md:rounded-lg md:border md:border-rule"
     >

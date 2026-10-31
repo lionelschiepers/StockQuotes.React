@@ -45,15 +45,14 @@ function describeRetryReason(classification) {
 }
 
 export async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
-  let lastError;
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
+  // Each attempt chains the next one, so retries stay strictly sequential.
+  const attemptFetch = async (attempt) => {
     try {
       return await axios.get(url);
     } catch (error) {
-      lastError = error;
       const classification = classifyRetryableError(error);
 
-      if (!classification.shouldRetry || attempt === maxRetries - 1) {
+      if (!classification.shouldRetry || attempt >= maxRetries - 1) {
         throw error;
       }
 
@@ -68,9 +67,11 @@ export async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
         `${reason}. Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`
       );
       await sleep(delay);
+      return attemptFetch(attempt + 1);
     }
-  }
-  throw lastError;
+  };
+
+  return attemptFetch(0);
 }
 
 function getUrl(quotes, fields) {

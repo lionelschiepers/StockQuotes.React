@@ -66,7 +66,7 @@ const YahooFinance = () => {
       }
     };
 
-    loadPortfolio();
+    void loadPortfolio();
     return () => {
       cancelled = true;
     };

@@ -91,14 +91,19 @@
   dialog::backdrop {
     background-color: rgb(19 27 46 / 0.6);
   }
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    ::before,
-    ::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
+/*
+ * Left outside every cascade layer on purpose: unlayered declarations take
+ * precedence over all of Tailwind's layers (including utilities such as
+ * animate-spin), so no !important is needed to win.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
   }
 }

@@ -22,7 +22,7 @@ function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   const onRedirectCallback = (appState) => {
-    navigate(appState?.returnTo ?? '/', { replace: true });
+    void navigate(appState?.returnTo ?? '/', { replace: true });
   };
 
   return (
