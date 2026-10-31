@@ -10,7 +10,7 @@ class Cache {
 
 // i.e: let rate = await GetRate('USD', 'EUR')
 export async function GetRate(from, to) {
-  const url = process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL;
+  const url = import.meta.env.VITE_EXCHANGE_RATES_URL;
 
   const isStale =
     Cache.FetchedAt == null || Date.now() - Cache.FetchedAt >= RATES_TTL_MS;

@@ -1,12 +1,12 @@
 # Project Overview
 
-This is a stock portfolio tracking application. It is built with Next.js and uses an Azure Functions API to fetch stock data from Yahoo Finance. The application uses Auth0 for user authentication.
+This is a stock portfolio tracking application. It is a client-side React SPA built with Vite and React Router, and uses an Azure Functions API to fetch stock data from Yahoo Finance. The application uses Auth0 for user authentication.
 
-The frontend is a Next.js application that displays the user's stock portfolio. The portfolio data is loaded from a CSV file hosted on GitHub. The application then enriches this data with real-time stock information fetched from the Azure Functions API.
+The frontend is a React single-page application (no server-side rendering) that displays the user's stock portfolio. The portfolio data is loaded from a CSV file hosted on GitHub. The application then enriches this data with real-time stock information fetched from the Azure Functions API.
 
 The backend is an Azure Functions API written in TypeScript. It uses the `yahoo-finance2` library to fetch stock data from Yahoo Finance.
 
-The project also contains a Blazor application, but it does not seem to be integrated with the Next.js application.
+The project also contains a Blazor application, but it does not seem to be integrated with the React application.
 
 # Building and Running
 
@@ -29,7 +29,9 @@ To build and run the backend API, you will need to have Node.js and the Azure Fu
 
 # Development Conventions
 
-*   The frontend is written in JavaScript and uses the Next.js framework.
+*   The frontend is written in JavaScript (JSX in `.jsx` files) and uses Vite with React Router.
+*   Client-side environment variables must be prefixed with `VITE_` and read via `import.meta.env`.
+*   Tests run with Vitest (`vi.*` APIs, jsdom environment).
 *   The backend is written in TypeScript and uses the Azure Functions framework.
 *   The project uses ESLint for linting. You can run the linter with `npm run lint`.
 *   The project uses Prettier for code formatting.

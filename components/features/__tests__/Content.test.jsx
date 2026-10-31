@@ -4,8 +4,8 @@ import YahooFinance from '../YahooFinance';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from '../Portfolio';
 
-jest.mock('@auth0/auth0-react');
-jest.mock('../Portfolio');
+vi.mock('@auth0/auth0-react');
+vi.mock('../Portfolio');
 
 const makePosition = (overrides = {}) => ({
   Ticker: 'AAA',
@@ -40,8 +40,8 @@ const positions = [
 
 describe('YahooFinance', () => {
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.useRealTimers();
+    vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   beforeEach(() => {
@@ -49,9 +49,9 @@ describe('YahooFinance', () => {
       isAuthenticated: true,
       user: { email: 'test@test.com' }
     });
-    Portfolio.getDayDiff = jest.fn().mockReturnValue(0.004);
-    Portfolio.getDividendRatio = jest.fn().mockReturnValue(0);
-    Portfolio.getDividendRate = jest.fn().mockReturnValue(0);
+    Portfolio.getDayDiff = vi.fn().mockReturnValue(0.004);
+    Portfolio.getDividendRatio = vi.fn().mockReturnValue(0);
+    Portfolio.getDividendRate = vi.fn().mockReturnValue(0);
   });
 
   it('renders the skeleton loader initially and then the empty state', async () => {
@@ -59,14 +59,14 @@ describe('YahooFinance', () => {
       () => new Promise((resolve) => setTimeout(() => resolve([]), 50))
     );
 
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     render(<YahooFinance />);
 
     expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
 
     await act(async () => {
-      jest.advanceTimersByTime(100);
+      vi.advanceTimersByTime(100);
       await Promise.resolve();
     });
 
@@ -81,7 +81,7 @@ describe('YahooFinance', () => {
   });
 
   it('explains a failed load and retries on request', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     Portfolio.Load.mockRejectedValueOnce(new Error('Network Error'));
     Portfolio.Load.mockResolvedValueOnce([]);
 

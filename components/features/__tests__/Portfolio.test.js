@@ -4,10 +4,10 @@ import papa from 'papaparse';
 import { GetRate } from '../ExchangeRates';
 import { YahooFinanceLoader } from '../YahooFinanceLoader';
 
-jest.mock('axios');
-jest.mock('papaparse');
-jest.mock('../ExchangeRates');
-jest.mock('../YahooFinanceLoader');
+vi.mock('axios');
+vi.mock('papaparse');
+vi.mock('../ExchangeRates');
+vi.mock('../YahooFinanceLoader');
 
 describe('SecurityPosition', () => {
   let securityPosition;
@@ -325,8 +325,8 @@ describe('Portfolio static methods', () => {
           regularMarketPreviousClose: 100,
           trailingAnnualDividendRate: 1
         },
-        getDividendYield: jest.fn().mockReturnValue(10),
-        getDayGain: jest.fn().mockReturnValue(50)
+        getDividendYield: vi.fn().mockReturnValue(10),
+        getDayGain: vi.fn().mockReturnValue(50)
       },
       {
         Ticker: 'GOOG',
@@ -342,8 +342,8 @@ describe('Portfolio static methods', () => {
           regularMarketPreviousClose: 150,
           trailingAnnualDividendRate: 1.5
         },
-        getDividendYield: jest.fn().mockReturnValue(15),
-        getDayGain: jest.fn().mockReturnValue(75)
+        getDividendYield: vi.fn().mockReturnValue(15),
+        getDayGain: vi.fn().mockReturnValue(75)
       },
       {
         Ticker: 'EMPTY',
@@ -355,8 +355,8 @@ describe('Portfolio static methods', () => {
         Currency: 'USD',
         RateToEUR: 0.85,
         Security: null,
-        getDividendYield: jest.fn().mockReturnValue(0),
-        getDayGain: jest.fn().mockReturnValue(0)
+        getDividendYield: vi.fn().mockReturnValue(0),
+        getDayGain: vi.fn().mockReturnValue(0)
       }
     ];
   });
@@ -425,7 +425,7 @@ describe('Portfolio static methods', () => {
         {
           NumberOfShares: 10,
           MarketPriceEUR: 100,
-          getDayGain: jest.fn().mockReturnValue(100) // dayGain equals marketPrice
+          getDayGain: vi.fn().mockReturnValue(100) // dayGain equals marketPrice
         }
       ];
       const dayDiff = Portfolio.getDayDiff(mockPositions);
@@ -487,9 +487,12 @@ GOOG,Alphabet,Buy,5,150,2.5
     GetRate.mockClear();
     YahooFinanceLoader.mockClear();
     mockYahooFinanceLoaderInstance = {
-      Load: jest.fn().mockResolvedValue(mockYahooData)
+      Load: vi.fn().mockResolvedValue(mockYahooData)
     };
-    YahooFinanceLoader.mockImplementation(() => mockYahooFinanceLoaderInstance);
+    // `new YahooFinanceLoader()` needs a constructible (non-arrow) implementation.
+    YahooFinanceLoader.mockImplementation(function () {
+      return mockYahooFinanceLoaderInstance;
+    });
   });
 
   it('should load a basic CSV with buy transactions', async () => {

@@ -1,11 +1,8 @@
-import React from 'react';
-import dynamic from 'next/dynamic';
+import React, { lazy, Suspense } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import Loading from '../components/ui/Loading';
 
-const YahooFinance = dynamic(
-  () => import('../components/features/YahooFinance')
-);
+const YahooFinance = lazy(() => import('../components/features/YahooFinance'));
 
 export default function Home() {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
@@ -15,7 +12,11 @@ export default function Home() {
   }
 
   if (isAuthenticated) {
-    return <YahooFinance />;
+    return (
+      <Suspense fallback={<Loading label="Loading your portfolio" />}>
+        <YahooFinance />
+      </Suspense>
+    );
   }
 
   return (

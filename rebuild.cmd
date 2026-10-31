@@ -1,5 +1,4 @@
 rd /s /q node_modules
-rd /s /q .next
 rd /s /q out
 del pnpm-lock.yaml
 cmd /c pnpm.cmd i

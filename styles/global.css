@@ -16,7 +16,7 @@
   --color-loss: #b0261d;
   --color-ledger: #2b6852;
 
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
 
   /* Page headings: 36px on phones up to 48px on wide screens. */
   --text-display: clamp(2.25rem, 5vw, 3rem);

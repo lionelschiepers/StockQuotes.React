@@ -1,6 +1,6 @@
 import { calculateGreeksAndPOP } from '../YahooFinanceOptionsModal';
 
-jest.mock('../YahooFinanceLoader');
+vi.mock('../YahooFinanceLoader');
 
 describe('calculateGreeksAndPOP', () => {
   const YEAR_MS = 365 * 24 * 60 * 60 * 1000;

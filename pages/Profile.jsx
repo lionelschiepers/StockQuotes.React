@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import Loading from '../components/ui/Loading';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 
@@ -13,8 +12,8 @@ function Profile() {
   return (
     <main className="mx-auto max-w-7xl px-4 pb-20 pt-14 sm:px-6 lg:px-8">
       <div className="flex items-center gap-6">
-        <Image
-          src={user?.picture || '/favicon.svg'}
+        <img
+          src={user?.picture || `${import.meta.env.BASE_URL}favicon.svg`}
           alt=""
           className="h-24 w-24 rounded-full object-cover ring-1 ring-rule"
           width={96}
@@ -40,5 +39,7 @@ function Profile() {
 }
 
 export default withAuthenticationRequired(Profile, {
+  // Router-relative path, so it stays valid when the app is served under a base path.
+  returnTo: '/profile',
   onRedirecting: () => <Loading />
 });

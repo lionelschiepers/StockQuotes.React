@@ -1,18 +1,15 @@
-import nextPlugin from '@next/eslint-plugin-next';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
 const config = [
   {
     ignores: [
-      '.next/**',
       'out/**',
       'build/**',
-      'next-env.d.ts',
       'node_modules/**',
       'public/**',
-      'components/ui/Loading.js',
-      'components/ui/SkeletonLoader.js'
+      'components/ui/Loading.jsx',
+      'components/ui/SkeletonLoader.jsx'
     ]
   },
   {
@@ -31,16 +28,15 @@ const config = [
       }
     }
   },
-  nextPlugin.configs['core-web-vitals'],
   reactHooksPlugin.configs.flat['recommended-latest'],
   {
     files: [
       '**/*.{test,spec}.{js,jsx}',
       '**/__tests__/**/*.{js,jsx}',
-      'jest.setup.js'
+      'vitest.setup.js'
     ],
     languageOptions: {
-      globals: globals.jest
+      globals: globals.vitest
     }
   }
 ];

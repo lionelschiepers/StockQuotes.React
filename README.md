@@ -1,5 +1,5 @@
 # Stock Portfolio Tracker
-[![Next.js](https://img.shields.io/badge/Powered%20by-Next.js-black)](https://nextjs.org/)
+[![Vite](https://img.shields.io/badge/Built%20with-Vite-646CFF)](https://vite.dev/)
 [![Auth0](https://img.shields.io/badge/Auth-Auth0-blue)](https://auth0.com/)
 [![Azure Functions](https://img.shields.io/badge/Serverless-Azure%20Functions-0078D4)](https://azure.microsoft.com/en-us/services/functions/)
 [![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4)](https://tailwindcss.com/)\
@@ -9,7 +9,7 @@
 
 ## Project Overview
 
-This project is a modern, responsive stock portfolio tracking application designed to help you keep a close eye on your investments. Built with the powerful Next.js framework, it offers a seamless user experience for managing and visualizing your stock holdings.
+This project is a modern, responsive stock portfolio tracking application designed to help you keep a close eye on your investments. Built as a React single-page application with Vite and React Router, it offers a seamless user experience for managing and visualizing your stock holdings.
 
 The application leverages a robust Azure Functions API to fetch real-time stock data directly from Yahoo Finance, ensuring you always have up-to-date information. Secure user authentication is handled via Auth0, providing a safe and personalized environment for your financial data.
 
@@ -29,7 +29,8 @@ Whether you're a seasoned investor or just starting, this tracker provides a cle
 ## Technologies Used
 
 ### Frontend
-- **Next.js:** A React framework for production, providing server-side rendering and static site generation.
+- **Vite:** Fast dev server and build tool producing a static single-page application.
+- **React Router:** Client-side routing.
 - **React:** A JavaScript library for building user interfaces.
 - **Tailwind CSS:** A utility-first CSS framework for rapidly building custom designs.
 - **Auth0:** For secure and seamless user authentication.
@@ -41,7 +42,7 @@ Whether you're a seasoned investor or just starting, this tracker provides a cle
 
 ### Development & Deployment
 - **ESLint & Prettier:** For code quality and consistent formatting.
-- **Fully Tested:** Comes with a comprehensive test suite using Jest.
+- **Fully Tested:** Comes with a comprehensive test suite using Vitest.
 - **GitHub Actions:** For continuous integration and continuous deployment (CI/CD).
 - **Automated Docker Builds:** Docker images are automatically built and published to [Docker Hub](https://hub.docker.com/r/lionelschiepers/stockquote-react).
 - **Vulnerability Scanning:** Published Docker containers are scanned for security vulnerabilities.
@@ -74,13 +75,13 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```
 
     > **Note:** The Azure Functions backend lives in a separate repository.
-    > For local development you can either point `NEXT_PUBLIC_*_URL` to a
+    > For local development you can either point `VITE_*_URL` to a
     > deployed instance or run the API locally on `http://localhost:7071`.
 
 ### Running the Application
 
 1.  **Start the Frontend Application:**
-    Navigate to the project root, and start the Next.js development server:
+    Navigate to the project root, and start the Vite development server:
     ```bash
     npm run dev
     ```

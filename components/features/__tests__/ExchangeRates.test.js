@@ -1,7 +1,7 @@
 import { GetRate, Cache } from '../ExchangeRates';
 import axios from 'axios';
 
-jest.mock('axios');
+vi.mock('axios');
 
 // Mock DOMParser to control XML parsing behavior
 const mockNode = (currency, rate) => ({
@@ -12,7 +12,7 @@ const mockNode = (currency, rate) => ({
   }
 });
 
-const mockEvaluate = jest.fn(
+const mockEvaluate = vi.fn(
   (xpath, document, namespaceResolver, type, result) => {
     const nodes = [mockNode('USD', '1.1'), mockNode('GBP', '0.88')];
     let i = 0;
@@ -27,21 +27,23 @@ const mockEvaluate = jest.fn(
   }
 );
 
-globalThis.DOMParser = jest.fn(() => ({
-  parseFromString: jest.fn(() => ({
-    documentElement: {}, // Mock documentElement, might not be used directly in GetRate but good to have
-    evaluate: mockEvaluate
-  }))
-}));
+globalThis.DOMParser = vi.fn(function () {
+  return {
+    parseFromString: vi.fn(() => ({
+      documentElement: {}, // Mock documentElement, might not be used directly in GetRate but good to have
+      evaluate: mockEvaluate
+    }))
+  };
+});
 
 describe('GetRate', () => {
   beforeEach(() => {
     axios.get.mockReset();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockEvaluate.mockClear();
     // Invalidate the cache by re-importing the module.
     // This is a common pattern in Jest for modules with internal state.
-    // However, it's tricky with ES modules and `jest.unmock` may be needed
+    // However, it's tricky with ES modules and `vi.unmock` may be needed
     // or direct manipulation of the Cache if it were exported for testing.
     // For now, we rely on `axios.get` mock to simulate cache misses/hits.
 
@@ -59,7 +61,7 @@ describe('GetRate', () => {
       data: `<xml>mock</xml>` // Data content doesn't matter much now due to DOMParser mock
     });
 
-    process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
+    vi.stubEnv('VITE_EXCHANGE_RATES_URL', 'http://test.url');
 
     const rate = await GetRate('USD', 'EUR');
     expect(rate).toBeCloseTo(1 / 1.1);
@@ -74,7 +76,7 @@ describe('GetRate', () => {
       data: `<xml>mock</xml>`
     });
 
-    process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
+    vi.stubEnv('VITE_EXCHANGE_RATES_URL', 'http://test.url');
 
     await GetRate('USD', 'EUR'); // First call, fetches and caches
     // For the second call, we need to ensure the Cache.Rates is still populated from the first call.
@@ -92,7 +94,7 @@ describe('GetRate', () => {
       data: `<xml>mock</xml>`
     });
 
-    process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
+    vi.stubEnv('VITE_EXCHANGE_RATES_URL', 'http://test.url');
 
     const rateGBpToEUR = await GetRate('GBp', 'EUR');
     expect(rateGBpToEUR).toBeCloseTo(1 / (0.88 * 100)); // Rate for GBp is 100 * GBP rate
@@ -107,7 +109,7 @@ describe('GetRate', () => {
 
   it('should throw an error if the API call fails', async () => {
     axios.get.mockRejectedValueOnce(new Error('Network Error'));
-    process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
+    vi.stubEnv('VITE_EXCHANGE_RATES_URL', 'http://test.url');
 
     //    await expect(GetRate('USD', 'EUR')).rejects.toThrow(
     //      'Failed to load the exchange rates from http://test.url'
@@ -122,7 +124,7 @@ describe('GetRate', () => {
     axios.get.mockResolvedValueOnce({
       data: `<xml>mock</xml>`
     });
-    process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
+    vi.stubEnv('VITE_EXCHANGE_RATES_URL', 'http://test.url');
 
     await expect(GetRate('XYZ', 'EUR')).rejects.toThrow(
       'Failed to retrieve a rate for XYZ'
@@ -136,7 +138,7 @@ describe('GetRate', () => {
     axios.get.mockResolvedValueOnce({
       data: `<xml>mock</xml>`
     });
-    process.env.NEXT_PUBLIC_EXCHANGE_RATES_URL = 'http://test.url';
+    vi.stubEnv('VITE_EXCHANGE_RATES_URL', 'http://test.url');
 
     await expect(GetRate('USD', 'XYZ')).rejects.toThrow(
       'Failed to retrieve a rate for XYZ'

@@ -76,7 +76,7 @@ export async function fetchWithRetry(url, maxRetries = 3, baseDelay = 1000) {
 function getUrl(quotes, fields) {
   if (!Array.isArray(quotes)) quotes = [quotes];
 
-  let url = process.env.NEXT_PUBLIC_YAHOO_URL + '?symbols=' + quotes.join(',');
+  let url = import.meta.env.VITE_YAHOO_URL + '?symbols=' + quotes.join(',');
   if (fields == null) return url;
 
   return url + '&fields=' + fields.join(',');
@@ -165,7 +165,7 @@ export const YahooFinanceFields = {
 };
 
 export async function fetchStockOptions(symbol) {
-  const baseUrl = process.env.NEXT_PUBLIC_YAHOO_OPTIONS_URL;
+  const baseUrl = import.meta.env.VITE_YAHOO_OPTIONS_URL;
   if (!baseUrl) {
     throw new Error('Option URL is not configured in .env');
   }

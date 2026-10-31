@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useId } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types';
 
@@ -87,9 +86,9 @@ function AccountMenu({ user, onLogout }) {
         aria-expanded={isOpen}
         aria-controls={panelId}
       >
-        <Image
+        <img
           className="h-9 w-9 rounded-full"
-          src={user.picture || '/favicon.svg'}
+          src={user.picture || `${import.meta.env.BASE_URL}favicon.svg`}
           alt=""
           width={36}
           height={36}
@@ -107,7 +106,7 @@ function AccountMenu({ user, onLogout }) {
             )}
           </div>
           <Link
-            href="/profile"
+            to="/profile"
             onClick={() => setIsOpen(false)}
             className="mt-1 block px-4 py-2 hover:bg-shade"
           >
@@ -167,7 +166,7 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
     <nav className="border-b border-rule">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
-          href="/"
+          to="/"
           className="flex items-center gap-2.5 text-lg font-semibold font-wide"
         >
           <svg

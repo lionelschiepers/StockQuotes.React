@@ -5,7 +5,7 @@ import {
   YahooFinanceLoader
 } from '../YahooFinanceLoader';
 
-jest.mock('axios');
+vi.mock('axios');
 
 describe('chunk', () => {
   it('splits an array into chunks of the specified size', () => {
@@ -32,13 +32,13 @@ describe('fetchWithRetry', () => {
   let warnSpy;
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     axios.get.mockReset();
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
     warnSpy.mockRestore();
   });
 
@@ -53,7 +53,7 @@ describe('fetchWithRetry', () => {
     );
     while (resolved === undefined && rejected === undefined) {
       await Promise.resolve();
-      jest.runOnlyPendingTimers();
+      vi.runOnlyPendingTimers();
       await Promise.resolve();
     }
     await wrapped;
@@ -124,7 +124,7 @@ describe('YahooFinanceLoader.Load (cache)', () => {
   beforeEach(() => {
     axios.get.mockReset();
     localStorage.clear();
-    process.env.NEXT_PUBLIC_YAHOO_URL = 'http://api/yahoo';
+    vi.stubEnv('VITE_YAHOO_URL', 'http://api/yahoo');
   });
 
   it('returns cached entries that are still within the 5-minute TTL without calling the network', async () => {
