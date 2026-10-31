@@ -20,7 +20,8 @@ Whether you're a seasoned investor or just starting, this tracker provides a cle
 - **Real-time Stock Data:** Get instant updates on your stock prices and portfolio value, powered by Yahoo Finance.
 - **Personalized Portfolio Management:** Track individual stock holdings and see their performance at a glance.
 - **Secure Authentication:** Log in with confidence using Auth0 for secure access to your portfolio.
-- **Dynamic Data Visualization:** Understand your investments better with clear and concise data representation.
+- **Today at a glance:** The page opens on today's gain or loss in euros, the holdings that drove it, and a band showing every holding sized by its share of the portfolio and shaded by today's move; select a block to open that holding on Yahoo Finance.
+- **Gains, dividends and options:** A ledger totals value, cost, gain, realized gain and yearly dividends after tax; each open position links to its option chain with delta and probability-of-profit estimates.
 - **Responsive Design:** Access your portfolio from any device, thanks to a mobile-first and responsive user interface.
 - **CSV-based Portfolio Loading:** Easily load your portfolio data from a CSV file hosted on GitHub, offering flexibility and easy updates.
 - **Dark Mode Support:** Enjoy a comfortable viewing experience with built-in dark mode, powered by Tailwind CSS.

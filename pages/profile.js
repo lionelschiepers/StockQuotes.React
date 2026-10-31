@@ -11,29 +11,30 @@ function Profile() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex flex-col items-center profile-header text-center mb-8">
-        <div className="mb-4">
-          <Image
-            src={user?.picture || '/favicon.svg'}
-            alt="Profile"
-            className="rounded-full w-32 h-32 object-cover profile-picture"
-            width={128}
-            height={128}
-          />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            {user?.name || 'Loading...'}
-          </h2>
-          <p className="text-gray-600">{user?.email || 'Loading...'}</p>
+    <main className="mx-auto max-w-7xl px-4 pb-20 pt-14 sm:px-6 lg:px-8">
+      <div className="flex items-center gap-6">
+        <Image
+          src={user?.picture || '/favicon.svg'}
+          alt=""
+          className="h-24 w-24 rounded-full object-cover ring-1 ring-rule"
+          width={96}
+          height={96}
+        />
+        <div className="min-w-0">
+          <h1 className="truncate text-display font-bold font-wide">
+            {user?.name}
+          </h1>
+          <p className="truncate text-lg text-pencil">{user?.email}</p>
         </div>
       </div>
-      <div>
-        <pre className="rounded bg-gray-900 text-gray-100 p-4 overflow-x-auto text-sm">
+      <details className="mt-12 max-w-4xl">
+        <summary className="cursor-pointer text-pencil hover:text-ink">
+          Account data from Auth0
+        </summary>
+        <pre className="mt-3 overflow-x-auto rounded-md border border-rule bg-sheet p-4 text-sm">
           <code>{JSON.stringify(user, null, 2)}</code>
         </pre>
-      </div>
+      </details>
     </main>
   );
 }

@@ -1,588 +1,134 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { List } from 'react-window';
+import React, { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Portfolio } from './Portfolio';
-import { CSVLink } from 'react-csv';
 import SkeletonLoader from '../ui/SkeletonLoader';
-
-import YahooFinanceRow from './YahooFinanceRow';
+import PortfolioSummary from './PortfolioSummary';
+import PortfolioTable from './PortfolioTable';
 import YahooFinanceOptionsModal from './YahooFinanceOptionsModal';
 
-function getGainColorClass(value) {
-  if (value > 0) {
-    return 'text-emerald-600 dark:text-emerald-400';
+const PORTFOLIO_BASE_URL =
+  'https://raw.githubusercontent.com/lionelschiepers/StockQuote.Portfolio/main/Portfolio/';
+
+function describeLoadError(error, email) {
+  if (error?.response?.status === 404) {
+    return `No portfolio file was found for ${email}. Add ${email}.csv to the StockQuote.Portfolio repository, then try again.`;
   }
-  if (value < 0) {
-    return 'text-rose-600 dark:text-rose-400';
-  }
-  return 'text-gray-500 dark:text-gray-400';
+  const detail = error?.message ? ` (${error.message})` : '';
+  return `The portfolio file or the price service couldn't be reached${detail}. Check your connection, then try again.`;
 }
+
+function Notice({ title, children, role }) {
+  return (
+    <section role={role} className="max-w-[60ch] pt-14">
+      <h1 className="text-display font-bold font-wide">{title}</h1>
+      <div className="mt-4 text-lg leading-relaxed">{children}</div>
+    </section>
+  );
+}
+
+Notice.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+  role: PropTypes.string
+};
 
 const YahooFinance = () => {
   const { isAuthenticated, user } = useAuth0();
+  const email = user?.email;
 
-  const [portfolio, setPortfolio] = useState([]);
-  const [marketCost, setMarketCost] = useState(0);
-  const [marketPrice, setMarketPrice] = useState(0);
-  const [pastGain, setPastGain] = useState(0);
-  const [gain, setGain] = useState(0);
-  const [dayDiff, setDayDiff] = useState(0);
-  const [dividendYield, setDividendYield] = useState(0);
-  const [dividendRate, setDividendRate] = useState(0);
-  const [sortBy, setSortBy] = useState(null);
-  const [sortDirection, setSortDirection] = useState(null);
-  const [displayInEUR, setDisplayInEUR] = useState(false);
-  const [filterZeroShares, setFilterZeroShares] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedOptionSymbol, setSelectedOptionSymbol] = useState(null);
-  const [selectedOptionPrice, setSelectedOptionPrice] = useState(null);
+  const [load, setLoad] = useState({
+    status: 'loading',
+    positions: [],
+    error: null
+  });
+  const [attempt, setAttempt] = useState(0);
+  const [optionTarget, setOptionTarget] = useState(null);
 
-  // Load portfolio data when component mounts or user changes
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !email) return undefined;
 
+    let cancelled = false;
     const loadPortfolio = async () => {
-      setIsLoading(true);
+      setLoad((previous) => ({ ...previous, status: 'loading', error: null }));
       try {
-        const portfolioUri = `https://raw.githubusercontent.com/lionelschiepers/StockQuote.Portfolio/main/Portfolio/${encodeURIComponent(
-          user.email
-        )}.csv`;
-
-        const portfolioData = await Portfolio.Load(portfolioUri);
-        setPortfolio(portfolioData);
-
-        let totalMarketCost = 0;
-        let totalMarketPrice = 0;
-        let totalPastGain = 0;
-
-        portfolioData.forEach((position) => {
-          totalPastGain += position.PastGainEUR;
-
-          if (!Number.isNaN(position.MarketCostEUR)) {
-            totalMarketCost += position.MarketCostEUR;
-          }
-          if (!Number.isNaN(position.MarketPriceEUR)) {
-            totalMarketPrice += position.MarketPriceEUR;
-          }
-        });
-
-        const totalGain =
-          totalMarketCost === 0 ? 0 : totalMarketPrice / totalMarketCost - 1;
-        const totalDayDiff = Portfolio.getDayDiff(portfolioData);
-        const totalDividendYield = Portfolio.getDividendRatio(portfolioData);
-        const totalDividendRate = Portfolio.getDividendRate(portfolioData);
-
-        setMarketCost(totalMarketCost);
-        setMarketPrice(totalMarketPrice);
-        setGain(totalGain);
-        setPastGain(totalPastGain);
-        setDayDiff(totalDayDiff);
-        setDividendYield(totalDividendYield);
-        setDividendRate(totalDividendRate);
+        const positions = await Portfolio.Load(
+          `${PORTFOLIO_BASE_URL}${encodeURIComponent(email)}.csv`
+        );
+        if (!cancelled) {
+          setLoad({ status: 'ready', positions, error: null });
+        }
       } catch (error) {
         console.error('Failed to load portfolio:', error);
-      } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setLoad({ status: 'error', positions: [], error });
+        }
       }
     };
 
     loadPortfolio();
-  }, [isAuthenticated, user]);
-
-  // Sort functionality
-  const getSortValue = useCallback(
-    (item, sortByField) => {
-      switch (sortByField) {
-        case 'Security.regularMarketPrice':
-          return item.Security?.regularMarketPrice || 0;
-        case 'Diff':
-          return item.getDayDiff();
-        case 'GainPercent':
-          return item.getGainDiff();
-        case 'Gain':
-          return item.getGain(displayInEUR);
-        default:
-          return item[sortByField];
-      }
-    },
-    [displayInEUR]
-  );
-
-  const internalSort = useCallback(
-    (list, sortByField, direction) => {
-      const compareNames = (a, b) => {
-        const aName = a.Name.toLowerCase();
-        const bName = b.Name.toLowerCase();
-        return direction === 'ASC'
-          ? aName.localeCompare(bName)
-          : bName.localeCompare(aName);
-      };
-
-      const handleZeroShares = (a, b) => {
-        const aHasZeroShares = a.NumberOfShares === 0;
-        const bHasZeroShares = b.NumberOfShares === 0;
-
-        if (aHasZeroShares && !bHasZeroShares) return 1;
-        if (!aHasZeroShares && bHasZeroShares) return -1;
-        if (aHasZeroShares && bHasZeroShares) return compareNames(a, b);
-        return null;
-      };
-
-      const sortedList = [...list].sort((a, b) => {
-        if (sortByField === 'Name') {
-          return compareNames(a, b);
-        }
-
-        const zeroSharesResult = handleZeroShares(a, b);
-        if (zeroSharesResult !== null) return zeroSharesResult;
-
-        const aValue = getSortValue(a, sortByField, displayInEUR);
-        const bValue = getSortValue(b, sortByField, displayInEUR);
-
-        if (aValue == null && bValue == null) return 0;
-        if (aValue == null) return 1;
-        if (bValue == null) return -1;
-
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-          return direction === 'ASC'
-            ? aValue.toLowerCase().localeCompare(bValue.toLowerCase())
-            : bValue.toLowerCase().localeCompare(aValue.toLowerCase());
-        }
-
-        return direction === 'ASC' ? aValue - bValue : bValue - aValue;
-      });
-
-      return sortedList;
-    },
-    [displayInEUR, getSortValue]
-  );
-
-  const filteredPortfolio = useMemo(() => {
-    const filteredData = filterZeroShares
-      ? portfolio.filter((position) => position.NumberOfShares > 0)
-      : portfolio;
-
-    if (sortBy == null || sortDirection == null) {
-      return filteredData;
-    }
-
-    return internalSort(filteredData, sortBy, sortDirection);
-  }, [filterZeroShares, portfolio, sortBy, sortDirection, internalSort]);
-
-  // Helper function to format values in K€ with browser-native locale
-  const formatInKEur = useCallback((value) => {
-    if (value == null || Number.isNaN(value)) return '';
-    const kValue = value / 1000;
-    const locale =
-      typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
-    return (
-      kValue.toLocaleString(locale, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }) + ' K€'
-    );
-  }, []);
-
-  // Helper function to calculate cell data and post data
-  const calculateCellDataAndPostData = useCallback(
-    (initialCellData, dataKey, rowData) => {
-      let cellData = initialCellData;
-      let postData = '';
-
-      if (
-        dataKey === 'Security.regularMarketPrice' &&
-        rowData.Security != null &&
-        cellData != null
-      ) {
-        postData = rowData.Currency;
-      } else if (dataKey === 'Diff') {
-        const price = rowData.Security?.regularMarketPrice;
-        const previousPrice = rowData.Security?.regularMarketPreviousClose;
-        if (price == null || previousPrice == null) {
-          return { cellData: Number.NaN, postData: '' };
-        }
-        cellData = 100 * (price / previousPrice - 1);
-        postData = '%';
-      } else if (dataKey === 'GainPercent') {
-        postData = '%';
-      } else if (dataKey === 'MarketCost' && displayInEUR) {
-        cellData = rowData.MarketCostEUR;
-      } else if (dataKey === 'MarketPrice' && displayInEUR) {
-        cellData = rowData.MarketPriceEUR;
-      } else if (dataKey === 'PastGain' && displayInEUR) {
-        cellData = rowData.PastGainEUR;
-      }
-
-      if (
-        (dataKey === 'MarketCost' || dataKey === 'MarketPrice') &&
-        cellData === 0
-      ) {
-        cellData = null;
-      }
-
-      return { cellData, postData };
-    },
-    [displayInEUR]
-  );
-
-  // Helper function to format display value
-  const formatDisplayValue = useCallback((value, dataKey) => {
-    if (value == null) return '';
-
-    const locale =
-      typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
-
-    if (dataKey === 'Security.regularMarketPrice') {
-      return value.toLocaleString(locale, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
-
-    const shouldRemoveDecimals =
-      dataKey === 'MarketCost' ||
-      dataKey === 'MarketPrice' ||
-      dataKey === 'Gain';
-
-    if (shouldRemoveDecimals) {
-      return Math.round(value).toLocaleString(locale);
-    } else if (dataKey === 'Diff' || dataKey === 'GainPercent') {
-      return value.toLocaleString(locale, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    } else {
-      return value.toLocaleString(locale, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      });
-    }
-  }, []);
-
-  // Price rendering function
-  const renderPrice = useCallback(
-    (initialCellData, dataKey, rowData) => {
-      if (Number.isNaN(initialCellData)) return <div />;
-
-      // Handle NumberOfShares early as it has a distinct rendering format
-      if (dataKey === 'NumberOfShares') {
-        return (
-          <div>{initialCellData == null ? '' : initialCellData.toFixed(0)}</div>
-        );
-      }
-
-      const { cellData, postData } = calculateCellDataAndPostData(
-        initialCellData,
-        dataKey,
-        rowData,
-        displayInEUR
-      );
-
-      if (Number.isNaN(cellData)) return <div />; // If calculation resulted in NaN (e.g., price data missing for 'Diff')
-
-      const displayValue = formatDisplayValue(cellData, dataKey);
-
-      let colorClass = 'text-gray-900 dark:text-white';
-      if (['Diff', 'Gain', 'GainPercent', 'PastGain'].includes(dataKey)) {
-        if (cellData > 0) {
-          colorClass = 'text-emerald-600 dark:text-emerald-400 font-semibold';
-        } else if (cellData < 0) {
-          colorClass = 'text-rose-600 dark:text-rose-400 font-semibold';
-        } else {
-          colorClass = 'text-gray-500 dark:text-gray-400';
-        }
-      }
-
-      return (
-        <div className={colorClass}>
-          {displayValue} {postData}
-        </div>
-      );
-    },
-    [displayInEUR, calculateCellDataAndPostData, formatDisplayValue]
-  );
-
-  // Name rendering function
-  const renderName = useCallback((rowData) => {
-    return (
-      <div className="flex items-center justify-between w-full">
-        <a
-          className="text-gray-900 dark:text-white truncate pr-2 hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={`https://finance.yahoo.com/quote/${rowData.Ticker}`}
-          title={rowData.Name}
-        >
-          {rowData.Name}
-        </a>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setSelectedOptionSymbol(rowData.Ticker);
-            setSelectedOptionPrice(rowData.Security?.regularMarketPrice);
-          }}
-          type="button"
-          className="cursor-pointer shrink-0 ml-auto px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950 dark:hover:bg-blue-900 dark:text-blue-400 border border-blue-200 dark:border-blue-800 transition"
-          title={`View options chain for ${rowData.Ticker}`}
-        >
-          ⌥ Options
-        </button>
-      </div>
-    );
-  }, []);
-
-  // Toggle EUR display
-  const handleCheck = useCallback(() => {
-    setDisplayInEUR((prev) => !prev);
-  }, []);
-
-  // Toggle zero shares filter
-  const handleFilterZeroShares = useCallback(() => {
-    setFilterZeroShares((prev) => !prev);
-  }, []);
-
-  // Memoized sort indicator
-  const getSortIndicator = useCallback(
-    (field) => {
-      if (sortBy === field && sortDirection === 'ASC') return '↑';
-      if (sortBy === field && sortDirection === 'DESC') return '↓';
-      return '';
-    },
-    [sortBy, sortDirection]
-  );
-
-  const handleKeyDown = (onClick) => (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      onClick();
-    }
-  };
-
-  // Create sort handler for each column
-  const createSortHandler = useCallback((field) => {
     return () => {
-      setSortBy((prevSortBy) => {
-        setSortDirection((prevSortDirection) => {
-          return prevSortBy === field && prevSortDirection === 'ASC'
-            ? 'DESC'
-            : 'ASC';
-        });
-        return field;
-      });
+      cancelled = true;
     };
+  }, [isAuthenticated, email, attempt]);
+
+  const retry = useCallback(() => setAttempt((count) => count + 1), []);
+
+  const openOptions = useCallback((position) => {
+    setOptionTarget({
+      symbol: position.Ticker,
+      name: position.Name,
+      price: position.Security?.regularMarketPrice ?? null
+    });
   }, []);
 
-  const csvData = portfolio;
-
-  if (isLoading) {
-    return <SkeletonLoader />;
+  let content;
+  if (load.status === 'loading') {
+    content = <SkeletonLoader />;
+  } else if (load.status === 'error') {
+    content = (
+      <Notice title="Your portfolio didn't load" role="alert">
+        <p>{describeLoadError(load.error, email)}</p>
+        <button
+          type="button"
+          onClick={retry}
+          className="mt-6 h-10 cursor-pointer rounded-md bg-ink px-4 font-medium text-paper hover:opacity-90"
+        >
+          Try again
+        </button>
+      </Notice>
+    );
+  } else if (load.positions.length === 0) {
+    content = (
+      <Notice title="No transactions yet">
+        <p>
+          Your portfolio file ({email}.csv) has no buy or sell rows. Add a
+          transaction to it and your holdings will appear here.
+        </p>
+      </Notice>
+    );
+  } else {
+    content = (
+      <>
+        <PortfolioSummary positions={load.positions} />
+        <PortfolioTable
+          positions={load.positions}
+          onOpenOptions={openOptions}
+        />
+      </>
+    );
   }
 
   return (
-    <main className="yahoo-finance-container bg-white dark:bg-gray-800 p-4 rounded-lg">
-      <div className="text-left mb-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="text-gray-900 dark:text-white">
-              Market Price:&nbsp;{/* prettier-ignore */}
-              <span className="font-semibold">{formatInKEur(marketPrice)}</span>
-            </div>
-            <div className="text-gray-900 dark:text-white">
-              Market Cost:&nbsp;{/* prettier-ignore */}
-              <span className="font-semibold">{formatInKEur(marketCost)}</span>
-            </div>
-            <div className="text-gray-900 dark:text-white">
-              Total Gain:&nbsp;{/* prettier-ignore */}
-              <span className={`font-semibold ${getGainColorClass(gain)}`}>
-                {(gain * 100).toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
-                %
-              </span>
-            </div>
-            <div className="text-gray-900 dark:text-white">
-              Day diff:&nbsp;{/* prettier-ignore */}
-              <span className={`font-semibold ${getGainColorClass(dayDiff)}`}>
-                {(dayDiff * 100).toLocaleString(typeof navigator !== 'undefined' ? navigator.language : 'fr-FR', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
-                %
-              </span>
-            </div>
-            <div className="text-gray-900 dark:text-white">
-              {/* prettier-ignore */}
-              Past Gain:&nbsp;
-              <span className={`font-semibold ${getGainColorClass(pastGain)}`}>
-                {formatInKEur(pastGain)}
-              </span>
-            </div>
-            <div className="text-gray-900 dark:text-white">
-              {/* prettier-ignore */}
-              Dividend Yield:&nbsp;
-              <span className="font-semibold">
-                {dividendYield.toLocaleString(
-                  typeof navigator !== 'undefined'
-                    ? navigator.language
-                    : 'fr-FR',
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  }
-                )}
-              </span>
-              <span> (</span>
-              <span className="font-semibold">
-                {formatInKEur(dividendRate)}
-              </span>
-              <span>)</span>
-            </div>
-          </div>
-          <div className="text-right">
-            <CSVLink
-              data={csvData}
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Download data
-            </CSVLink>
-          </div>
-        </div>
-      </div>
-      <div className="text-left mb-4">
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            onChange={handleCheck}
-            checked={displayInEUR}
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          />
-          <span className="text-gray-700 dark:text-gray-300">
-            Display in EUR
-          </span>
-        </label>
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            onChange={handleFilterZeroShares}
-            checked={filterZeroShares}
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          />
-          <span className="text-gray-700 dark:text-gray-300">
-            Remove closed positions
-          </span>
-        </label>
-      </div>
-      <div className="yahoo-finance-table-wrapper yahoo-finance-header-wrapper">
-        <div className="flex font-bold border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white">
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 350px', minWidth: '200px' }}
-            onClick={createSortHandler('Name')}
-            onKeyDown={handleKeyDown(createSortHandler('Name'))}
-          >
-            Name {getSortIndicator('Name')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 110px', minWidth: '70px' }}
-            onClick={createSortHandler('Security.regularMarketPrice')}
-            onKeyDown={handleKeyDown(
-              createSortHandler('Security.regularMarketPrice')
-            )}
-          >
-            Price {getSortIndicator('Security.regularMarketPrice')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 80px', minWidth: '70px' }}
-            onClick={createSortHandler('Diff')}
-            onKeyDown={handleKeyDown(createSortHandler('Diff'))}
-          >
-            Diff {getSortIndicator('Diff')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 80px', minWidth: '70px' }}
-            onClick={createSortHandler('NumberOfShares')}
-            onKeyDown={handleKeyDown(createSortHandler('NumberOfShares'))}
-          >
-            Shares {getSortIndicator('NumberOfShares')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 120px', minWidth: '100px' }}
-            onClick={createSortHandler('MarketCost')}
-            onKeyDown={handleKeyDown(createSortHandler('MarketCost'))}
-          >
-            Market Cost {getSortIndicator('MarketCost')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 130px', minWidth: '100px' }}
-            onClick={createSortHandler('MarketPrice')}
-            onKeyDown={handleKeyDown(createSortHandler('MarketPrice'))}
-          >
-            Market Price {getSortIndicator('MarketPrice')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 90px', minWidth: '90px' }}
-            onClick={createSortHandler('Gain')}
-            onKeyDown={handleKeyDown(createSortHandler('Gain'))}
-          >
-            Gain {getSortIndicator('Gain')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 90px', minWidth: '90px' }}
-            onClick={createSortHandler('GainPercent')}
-            onKeyDown={handleKeyDown(createSortHandler('GainPercent'))}
-          >
-            Gain % {getSortIndicator('GainPercent')}
-          </button>
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 text-left"
-            style={{ flex: '0 0 120px', minWidth: '100px' }}
-            onClick={createSortHandler('PastGain')}
-            onKeyDown={handleKeyDown(createSortHandler('PastGain'))}
-          >
-            Past Gain {getSortIndicator('PastGain')}
-          </button>
-        </div>
-      </div>
-      <div className="yahoo-finance-table-wrapper">
-        <List
-          className="react-window-list"
-          rowComponent={YahooFinanceRow}
-          rowCount={filteredPortfolio.length}
-          rowHeight={32}
-          height={600}
-          rowProps={{
-            portfolio: filteredPortfolio,
-            displayInEUR,
-            renderName,
-            renderPrice
-          }}
-        />
-      </div>
+    <main className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+      {content}
       <YahooFinanceOptionsModal
-        isOpen={Boolean(selectedOptionSymbol)}
-        symbol={selectedOptionSymbol}
-        currentPrice={selectedOptionPrice}
-        onClose={() => {
-          setSelectedOptionSymbol(null);
-          setSelectedOptionPrice(null);
-        }}
+        key={optionTarget?.symbol ?? 'closed'}
+        isOpen={optionTarget !== null}
+        symbol={optionTarget?.symbol}
+        name={optionTarget?.name}
+        currentPrice={optionTarget?.price ?? undefined}
+        onClose={() => setOptionTarget(null)}
       />
     </main>
   );

@@ -1,227 +1,198 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types';
 
-const NavBar = ({ darkMode, toggleDarkMode }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+const iconButtonClass =
+  'inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-pencil hover:bg-shade hover:text-ink';
 
-  const toggle = () => setIsOpen(!isOpen);
+function ThemeIcon({ darkMode }) {
+  if (darkMode) {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={1.75}
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path
+          strokeLinecap="round"
+          d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"
+        />
+      </svg>
+    );
+  }
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.75}
+    >
+      <path
+        strokeLinejoin="round"
+        d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"
+      />
+    </svg>
+  );
+}
+
+ThemeIcon.propTypes = {
+  darkMode: PropTypes.bool.isRequired
+};
+
+function AccountMenu({ user, onLogout }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+  const buttonRef = useRef(null);
+  const panelId = useId();
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (!containerRef.current?.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+        className="flex cursor-pointer rounded-full ring-1 ring-rule hover:ring-pencil"
+        aria-label="Account"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+      >
+        <Image
+          className="h-9 w-9 rounded-full"
+          src={user.picture || '/favicon.svg'}
+          alt=""
+          width={36}
+          height={36}
+        />
+      </button>
+      {isOpen && (
+        <div
+          id={panelId}
+          className="absolute right-0 top-full z-30 mt-2 w-64 rounded-md border border-rule bg-sheet py-2 shadow-[0_16px_32px_-16px_rgb(19_27_46/0.45)]"
+        >
+          <div className="border-b border-rule px-4 pb-3 pt-1">
+            <p className="truncate font-medium">{user.name}</p>
+            {user.email && (
+              <p className="truncate text-sm text-pencil">{user.email}</p>
+            )}
+          </div>
+          <Link
+            href="/profile"
+            onClick={() => setIsOpen(false)}
+            className="mt-1 block px-4 py-2 hover:bg-shade"
+          >
+            Profile
+          </Link>
+          <button
+            type="button"
+            onClick={onLogout}
+            className="block w-full cursor-pointer px-4 py-2 text-left hover:bg-shade"
+          >
+            Log out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+AccountMenu.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string,
+    picture: PropTypes.string
+  }).isRequired,
+  onLogout: PropTypes.func.isRequired
+};
+
+const NavBar = ({ darkMode, toggleDarkMode }) => {
+  const { user, isAuthenticated, isLoading, loginWithRedirect, logout } =
+    useAuth0();
 
   const logoutWithRedirect = () =>
     logout({
       returnTo: globalThis.window.location.origin
     });
 
+  const themeLabel = darkMode
+    ? 'Switch to light theme'
+    : 'Switch to dark theme';
+
+  let account = null;
+  if (isAuthenticated && user) {
+    account = <AccountMenu user={user} onLogout={logoutWithRedirect} />;
+  } else if (!isLoading) {
+    account = (
+      <button
+        type="button"
+        onClick={() => loginWithRedirect()}
+        className="h-10 cursor-pointer rounded-md border border-ink px-4 font-medium hover:bg-ink hover:text-paper"
+      >
+        Log in
+      </button>
+    );
+  }
+
   return (
-    <nav className="bg-gray-50 dark:bg-gray-900 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="shrink-0 flex items-center">
-              <Link
-                href="/"
-                className="text-xl font-bold text-gray-800 dark:text-white flex items-center"
-              >
-                <svg
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 512 512"
-                  data-iconid="483083"
-                  data-svgname="Stock market"
-                  className="mr-2 fill-current dark:text-white"
-                >
-                  <g>
-                    <polygon points="204.344,155.188 249.469,200.297 409.344,40.422 268.031,40.422 316.063,88.453 249.469,155.031 204.953,110.516 41.906,264.969 63.906,288.219"></polygon>
-                    <polygon points="512,102.313 276.031,330.281 212.656,266.906 0,471.578 512,471.578"></polygon>
-                  </g>
-                </svg>
-                Stock Quotes
-              </Link>
-            </div>
-            <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <Link
-                href="/"
-                className="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Home
-              </Link>
-              <button
-                type="button"
-                onClick={toggleDarkMode}
-                className="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                title="Toggle dark mode"
-                aria-label="Toggle dark mode"
-              >
-                {darkMode ? (
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
-          <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-            {!isAuthenticated && (
-              <button
-                type="button"
-                onClick={() => loginWithRedirect()}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Log in
-              </button>
-            )}
-            {isAuthenticated && (
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={toggle}
-                  className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800 focus:ring-white"
-                  aria-label="User menu"
-                  aria-haspopup="true"
-                >
-                  <Image
-                    className="h-8 w-8 rounded-full"
-                    src={user.picture}
-                    alt="Profile"
-                    width={32}
-                    height={32}
-                  />
-                </button>
-                {isOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 dark:ring-gray-600">
-                    <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b dark:border-gray-600">
-                      {user.name}
-                    </div>
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      Profile
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => logoutWithRedirect()}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      Log out
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="-mr-2 flex md:hidden">
-            <button
-              type="button"
-              onClick={toggle}
-              className="bg-white dark:bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isOpen}
-            >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d={
-                    isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'
-                  }
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link
-            href="/"
-            className="text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+    <nav className="border-b border-rule">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 text-lg font-semibold font-wide"
+        >
+          <svg
+            aria-hidden="true"
+            width="22"
+            height="22"
+            viewBox="0 0 512 512"
+            className="fill-current"
           >
-            Home
-          </Link>
-        </div>
-        <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-600">
-          {isAuthenticated && (
-            <div className="flex items-center px-5">
-              <div className="shrink-0">
-                <Image
-                  className="h-10 w-10 rounded-full"
-                  src={user.picture}
-                  alt="Profile"
-                  width={40}
-                  height={40}
-                />
-              </div>
-              <div className="ml-3">
-                <div className="text-base font-medium text-gray-800 dark:text-white">
-                  {user.name}
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="mt-3 space-y-1 px-2">
-            {isAuthenticated && (
-              <>
-                <Link
-                  href="/profile"
-                  className="text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                >
-                  Profile
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => logoutWithRedirect()}
-                  className="text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium"
-                >
-                  Log out
-                </button>
-              </>
-            )}
-            {!isAuthenticated && (
-              <button
-                type="button"
-                onClick={() => loginWithRedirect()}
-                className="bg-blue-600 hover:bg-blue-700 text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium"
-              >
-                Log in
-              </button>
-            )}
-          </div>
+            <polygon points="204.344,155.188 249.469,200.297 409.344,40.422 268.031,40.422 316.063,88.453 249.469,155.031 204.953,110.516 41.906,264.969 63.906,288.219" />
+            <polygon points="512,102.313 276.031,330.281 212.656,266.906 0,471.578 512,471.578" />
+          </svg>
+          Stock Quotes
+        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleDarkMode}
+            className={iconButtonClass}
+            title={themeLabel}
+            aria-label={themeLabel}
+          >
+            <ThemeIcon darkMode={darkMode} />
+          </button>
+          {account}
         </div>
       </div>
     </nav>

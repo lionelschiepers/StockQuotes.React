@@ -1,132 +1,112 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { formatNumber, formatPercent, moneyTone } from '../../lib/format';
+import { yahooQuoteUrl } from '../../lib/links';
 
-const YahooFinanceRow = React.memo(
-  function YahooFinanceRow({
-    index,
-    style,
-    portfolio,
-    displayInEUR,
-    renderName,
-    renderPrice
-  }) {
-    if (portfolio === undefined || index >= portfolio.length) return null;
+const cellClass =
+  'whitespace-nowrap border-b border-l border-rule bg-paper px-3 py-2.5 text-right group-hover:bg-shade nth-2:border-l-0';
 
-    const item = portfolio[index];
+function amountOrBlank(value) {
+  return value === 0 ? null : value;
+}
 
-    // Pre-calculate values that depend on displayInEUR to avoid recalculations
-    const marketCostValue = displayInEUR ? item.MarketCostEUR : item.MarketCost;
-    const marketPriceValue = displayInEUR
-      ? item.MarketPriceEUR
-      : item.MarketPrice;
-    const pastGainValue = displayInEUR ? item.PastGainEUR : item.PastGain;
-    const gainValue = item.getGain(displayInEUR);
-    const gainDiffValue = item.getGainDiff();
+const YahooFinanceRow = React.memo(function YahooFinanceRow({
+  item,
+  displayInEUR,
+  onOpenOptions
+}) {
+  const isClosed = item.NumberOfShares === 0;
+  const price = item.Security?.regularMarketPrice;
+  const dayDiff = item.getDayDiff();
+  const dayRatio = dayDiff == null ? null : dayDiff / 100;
+  const cost = amountOrBlank(
+    displayInEUR ? item.MarketCostEUR : item.MarketCost
+  );
+  const value = amountOrBlank(
+    displayInEUR ? item.MarketPriceEUR : item.MarketPrice
+  );
+  const gain = item.getGain(displayInEUR);
+  const gainRatio = isClosed ? null : item.getGainDiff() / 100;
+  const realized = amountOrBlank(
+    displayInEUR ? item.PastGainEUR : item.PastGain
+  );
 
-    return (
-      <div
-        role="listitem"
-        style={{
-          ...style,
-          display: 'flex',
-          alignItems: 'center',
-          minWidth: 'max-content'
-        }}
-        className={`
-          ${
-            index % 2 === 0
-              ? 'bg-white dark:bg-gray-900'
-              : 'bg-gray-50 dark:bg-gray-800'
-          } hover:bg-gray-200 dark:hover:bg-gray-600
-        `}
+  return (
+    <tr className={`group ${isClosed ? 'text-pencil' : ''}`}>
+      <th
+        scope="row"
+        className="sticky left-0 z-[5] border-b border-rule bg-paper px-3 py-2 text-left font-normal shadow-[inset_-1px_0_0_var(--color-rule)] group-hover:bg-shade"
       >
-        <div
-          style={{ flex: '0 0 350px', minWidth: '200px', padding: '6px 5px' }}
+        <a
+          className="block max-w-[8rem] truncate font-medium hover:underline sm:max-w-[18rem]"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={yahooQuoteUrl(item.Ticker)}
+          title={item.Name}
         >
-          {renderName(item)}
-        </div>
-        <div
-          style={{ flex: '0 0 110px', minWidth: '70px', padding: '6px 5px' }}
-        >
-          {renderPrice(
-            item.Security?.regularMarketPrice,
-            'Security.regularMarketPrice',
-            item
+          {item.Name}
+        </a>
+        <span className="mt-0.5 flex flex-wrap items-center gap-x-3 text-xs text-pencil">
+          <span>{item.Ticker}</span>
+          {!isClosed && (
+            <button
+              type="button"
+              onClick={() => onOpenOptions(item)}
+              className="cursor-pointer underline decoration-rule underline-offset-2 hover:text-ink hover:decoration-current"
+              aria-label={`Option chain for ${item.Name}`}
+            >
+              Option chain
+            </button>
           )}
-        </div>
-        <div style={{ flex: '0 0 80px', minWidth: '70px', padding: '6px 5px' }}>
-          {renderPrice(item.getDayDiff(), 'Diff', item)}
-        </div>
-        <div style={{ flex: '0 0 80px', minWidth: '70px', padding: '6px 5px' }}>
-          {renderPrice(item.NumberOfShares, 'NumberOfShares', item)}
-        </div>
-        <div
-          style={{ flex: '0 0 120px', minWidth: '100px', padding: '6px 5px' }}
-        >
-          {renderPrice(marketCostValue, 'MarketCost', item)}
-        </div>
-        <div
-          style={{ flex: '0 0 130px', minWidth: '100px', padding: '6px 5px' }}
-        >
-          {renderPrice(marketPriceValue, 'MarketPrice', item)}
-        </div>
-        <div style={{ flex: '0 0 90px', minWidth: '90px', padding: '6px 5px' }}>
-          {renderPrice(gainValue, 'Gain', item)}
-        </div>
-        <div style={{ flex: '0 0 90px', minWidth: '90px', padding: '6px 5px' }}>
-          {renderPrice(gainDiffValue, 'GainPercent', item)}
-        </div>
-        <div
-          style={{ flex: '0 0 120px', minWidth: '100px', padding: '6px 5px' }}
-        >
-          {renderPrice(pastGainValue, 'PastGain', item)}
-        </div>
-      </div>
-    );
-  },
-  (prevProps, nextProps) => {
-    // Custom comparison function to prevent unnecessary re-renders
-    return (
-      prevProps.displayInEUR === nextProps.displayInEUR &&
-      prevProps.index === nextProps.index &&
-      prevProps.portfolio[prevProps.index] ===
-        nextProps.portfolio[nextProps.index] &&
-      prevProps.style?.top === nextProps.style?.top
-    );
-  }
-);
+        </span>
+      </th>
+      <td className={cellClass}>
+        {formatNumber(price, { min: 2, max: 2 })}
+        {price != null && (
+          <span className="ml-1 text-xs text-pencil">{item.Currency}</span>
+        )}
+      </td>
+      <td className={`${cellClass} ${moneyTone(dayRatio)}`}>
+        {formatPercent(dayRatio, { signed: true })}
+      </td>
+      <td className={cellClass}>{formatNumber(item.NumberOfShares)}</td>
+      <td className={cellClass}>{formatNumber(cost, { max: 0 })}</td>
+      <td className={cellClass}>{formatNumber(value, { max: 0 })}</td>
+      <td className={`${cellClass} ${moneyTone(gain)}`}>
+        {formatNumber(gain, { max: 0, signed: true })}
+      </td>
+      <td className={`${cellClass} ${moneyTone(gainRatio)}`}>
+        {formatPercent(gainRatio, { signed: true })}
+      </td>
+      <td className={`${cellClass} ${moneyTone(realized)}`}>
+        {formatNumber(realized, { max: 0, signed: true })}
+      </td>
+    </tr>
+  );
+});
 
 YahooFinanceRow.propTypes = {
-  index: PropTypes.number.isRequired,
-  style: PropTypes.object, // style can be optional based on React Window's usage
-  portfolio: PropTypes.arrayOf(
-    PropTypes.shape({
-      Ticker: PropTypes.string,
-      Name: PropTypes.string,
-      NumberOfShares: PropTypes.number,
-      MarketCost: PropTypes.number,
-      MarketCostEUR: PropTypes.number,
-      MarketPrice: PropTypes.number,
-      MarketPriceEUR: PropTypes.number,
-      PastGain: PropTypes.number,
-      PastGainEUR: PropTypes.number,
-      Currency: PropTypes.string,
-      RateToEUR: PropTypes.number,
-      Security: PropTypes.shape({
-        regularMarketPrice: PropTypes.number,
-        regularMarketPreviousClose: PropTypes.number,
-        trailingAnnualDividendRate: PropTypes.number
-      }),
-      getGain: PropTypes.func,
-      getGainDiff: PropTypes.func,
-      getDayDiff: PropTypes.func,
-      getDividendYield: PropTypes.func,
-      getTaxeRate: PropTypes.func
-    })
-  ).isRequired,
+  item: PropTypes.shape({
+    Ticker: PropTypes.string,
+    Name: PropTypes.string,
+    NumberOfShares: PropTypes.number,
+    MarketCost: PropTypes.number,
+    MarketCostEUR: PropTypes.number,
+    MarketPrice: PropTypes.number,
+    MarketPriceEUR: PropTypes.number,
+    PastGain: PropTypes.number,
+    PastGainEUR: PropTypes.number,
+    Currency: PropTypes.string,
+    Security: PropTypes.shape({
+      regularMarketPrice: PropTypes.number,
+      regularMarketPreviousClose: PropTypes.number
+    }),
+    getGain: PropTypes.func,
+    getGainDiff: PropTypes.func,
+    getDayDiff: PropTypes.func
+  }).isRequired,
   displayInEUR: PropTypes.bool.isRequired,
-  renderName: PropTypes.func.isRequired,
-  renderPrice: PropTypes.func.isRequired
+  onOpenOptions: PropTypes.func.isRequired
 };
 
 export default YahooFinanceRow;

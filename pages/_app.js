@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Archivo } from 'next/font/google';
 import '../styles/global.css';
-import '../styles/YahooFinance.css';
 
 import { Auth0Provider } from '@auth0/auth0-react';
 import { getConfig } from '../lib/config/config';
 import NavBar from '../components/layout/NavBar';
+
+const archivo = Archivo({
+  subsets: ['latin'],
+  axes: ['wdth'],
+  variable: '--font-archivo',
+  display: 'swap'
+});
 
 const config = getConfig();
 
@@ -61,14 +68,14 @@ function MyApp({ Component, pageProps }) {
   return (
     <Auth0Provider {...providerConfig}>
       <Head>
-        <title>Stock Portfolio</title>
+        <title>Stock Quotes</title>
       </Head>
       <div
         id="app"
-        className="flex flex-col min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+        className={`${archivo.variable} font-sans flex flex-col min-h-screen bg-paper text-ink`}
       >
         <NavBar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <div className="grow bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+        <div className="grow">
           <Component {...pageProps} />
         </div>
       </div>

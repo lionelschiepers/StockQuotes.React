@@ -8,10 +8,10 @@ export default function Document() {
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta
           name="description"
-          content="A stock portfolio tracking application."
+          content="See how your stock portfolio moved today, with gains, dividends and option chains."
         ></meta>
       </Head>
-      <body>
+      <body className="bg-paper text-ink">
         <script
           id="theme-initializer"
           dangerouslySetInnerHTML={{
