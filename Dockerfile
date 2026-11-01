@@ -1,8 +1,9 @@
 # exposed on NAS with port 20003
 
-FROM node:lts-alpine AS builder
+# Pin to the Node major used in CI (Node 25+ no longer bundles Corepack).
+FROM node:26-alpine AS builder
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm install -g pnpm@11
 
 # if API is behind a reverse proxy, use relative URLs
 ENV VITE_EXCHANGE_RATES_URL=api/exchange-rate-ecb
