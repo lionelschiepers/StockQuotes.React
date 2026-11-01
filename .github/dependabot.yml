@@ -1,0 +1,14 @@
+# Dependabot configuration
+# Reference: https://docs.github.com/en/code-security/dependabot/dependabot-options-reference
+
+version: 2
+updates:
+  # Application dependencies, tracked with pnpm (pnpm-lock.yaml).
+  # Keep exactly one entry for the repository root: duplicate entries for the
+  # same directory make concurrent updater jobs fight over the same lockfile
+  # and fail intermittently.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
