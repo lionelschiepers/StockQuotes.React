@@ -3,7 +3,8 @@
 # Pin to the Node major used in CI (Node 25+ no longer bundles Corepack).
 FROM node:26-alpine AS builder
 
-RUN npm install -g pnpm@11
+# Keep in sync with engines.pnpm in package.json and the CI workflow
+RUN npm install -g pnpm@12.16.1
 
 # if API is behind a reverse proxy, use relative URLs
 ENV VITE_EXCHANGE_RATES_URL=api/exchange-rate-ecb
