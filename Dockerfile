@@ -4,7 +4,7 @@
 FROM node:26-alpine AS builder
 
 # Keep in sync with engines.pnpm in package.json and the CI workflow
-RUN npm install -g pnpm@12.16.1
+RUN npm install -g pnpm@12.18.0
 
 # if API is behind a reverse proxy, use relative URLs
 ENV VITE_EXCHANGE_RATES_URL=api/exchange-rate-ecb

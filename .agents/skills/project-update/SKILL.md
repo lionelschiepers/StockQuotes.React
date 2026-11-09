@@ -62,7 +62,7 @@ Read **Findings** below before updating: it is what earlier updates learned.
    All three must pass. If a major broke the build, revert that package with `git checkout -- package.json pnpm-lock.yaml` and redo the run with `--skip`.
 8. Update prose that hardcodes a version: `rg 'pnpm 12|Node 26|vite 8|jsdom 31' README.md Dockerfile .github`. `README.md` only says "Node.js (LTS recommended)" today, but comments in the Dockerfile/workflow name the sync points.
 9. Review the diff: `git diff --stat` and `git diff pnpm-lock.yaml`. The lockfile may change far more than the `package.json` specifiers: a pnpm bump rewrites peer suffixes and transitive resolutions (see Findings). Check that every changed `specifier` and `version` under `importers` is intended; never edit the lockfile by hand.
-10. Format: `npx --yes pnpm@<pinned-version> exec prettier --write package.json pnpm-workspace.yaml .github/workflows .agents/skills/project-update`.
+10. Format: `npx --yes pnpm@<pinned-version> exec prettier --write --ignore-path .prettierignore package.json pnpm-workspace.yaml .github/workflows .agents/skills/project-update`. The `--ignore-path` override is required: `.agents/` is in `.gitignore`, which Prettier honors by default, so without it the skill directory is silently skipped.
 11. Run the checker again: it must end with **Everything is up to date.** and no errors.
 12. **Learn before finishing**: follow the self-improvement loop below. Then summarize every version that moved, what was skipped and why, and what changed in this skill. Do not commit or push unless the user asks.
 
@@ -127,3 +127,4 @@ Never store tokens or other secrets in the skill, and never edit `pnpm-lock.yaml
 - 2026-11-09: pnpm 12 appends a minimumReleaseAgeExclude list to pnpm-workspace.yaml when a release is younger than its supply-chain policy; keep and commit it (19 entries on this run).
 - 2026-11-09: applyPnpmPins must tolerate a null pnpm update; --write would throw when only packages or actions were behind. It now plans pins through planPnpmPins and includes a regression case.
 - 2026-11-09: Node warns MODULE_TYPELESS_PACKAGE_JSON because the skill script is ESM in a project without a type field; the skill-local package.json sets type module and --check verifies it.
+- 2026-11-09: .agents/ is gitignored, so Prettier's default .gitignore handling silently skips the skill directory; step 10 must pass --ignore-path .prettierignore to format project-update.js and references.json.

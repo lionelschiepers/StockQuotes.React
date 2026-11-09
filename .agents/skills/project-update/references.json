@@ -312,7 +312,12 @@
       "fn": "planPnpmPins",
       "input": {
         "pins": [
-          { "kind": "workflow", "file": ".github/workflows/deploy.yml", "index": 47, "version": "12.16.1" }
+          {
+            "kind": "workflow",
+            "file": ".github/workflows/deploy.yml",
+            "index": 47,
+            "version": "12.16.1"
+          }
         ]
       },
       "expect": [

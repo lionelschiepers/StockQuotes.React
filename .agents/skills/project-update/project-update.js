@@ -237,9 +237,7 @@ function parseOverrides(text) {
     if (!line.trim() || /^\s*#/.test(line)) continue;
     if (indentOf(line) === 0) break;
 
-    const match = /^(\s+)([^\s:#][^:]*):\s*(['"]?)([^'"\s]+)\3\s*$/.exec(
-      line
-    );
+    const match = /^(\s+)([^\s:#][^:]*):\s*(['"]?)([^'"\s]+)\3\s*$/.exec(line);
     if (match) {
       overrides.push({
         name: match[2].trim(),
@@ -406,8 +404,11 @@ if (opts.learn !== undefined) {
 }
 
 async function latestPackage(name) {
-  return (await requestJson(`https://registry.npmjs.org/${encodeURIComponent(name)}/latest`))
-    .version;
+  return (
+    await requestJson(
+      `https://registry.npmjs.org/${encodeURIComponent(name)}/latest`
+    )
+  ).version;
 }
 
 async function checkPackages(pkg) {
@@ -728,9 +729,7 @@ function describeNode(pkg, nodeInfo) {
   console.log(
     `  workflows:      ${
       pins.flows.length
-        ? pins.flows
-            .map((pin) => `${pin.version} in ${pin.file}`)
-            .join(', ')
+        ? pins.flows.map((pin) => `${pin.version} in ${pin.file}`).join(', ')
         : 'not pinned'
     }`
   );
@@ -739,7 +738,9 @@ function describeNode(pkg, nodeInfo) {
   );
 
   const mismatched = [
-    ...pins.flows.filter((pin) => pin.major !== ltsMajor).map((pin) => pin.file),
+    ...pins.flows
+      .filter((pin) => pin.major !== ltsMajor)
+      .map((pin) => pin.file),
     ...(pins.docker && pins.docker.major !== ltsMajor ? ['Dockerfile'] : [])
   ];
   if (mismatched.length > 0) {
@@ -782,9 +783,7 @@ function report(packageUpdates, overrideUpdates, pnpmInfo, actionUpdates) {
     );
   } else {
     const { update } = pnpmInfo;
-    console.log(
-      `  ${update.current} -> ${update.latest} (${update.type})`
-    );
+    console.log(`  ${update.current} -> ${update.latest} (${update.type})`);
     for (const pin of pnpmInfo.pins) console.log(`    ${pin.place}`);
     if (update.engineNext) {
       console.log(
