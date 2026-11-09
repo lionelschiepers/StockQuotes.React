@@ -1,4 +1,8 @@
-import { calculateGreeksAndPOP } from '../YahooFinanceOptionsModal';
+import {
+  calculateGreeksAndPOP,
+  daysUntil,
+  formatExpiryWithDays
+} from '../YahooFinanceOptionsModal';
 
 vi.mock('../YahooFinanceLoader');
 
@@ -26,5 +30,35 @@ describe('calculateGreeksAndPOP', () => {
       delta: null,
       pop: null
     });
+  });
+});
+
+describe('daysUntil', () => {
+  const now = new Date(2026, 10, 9, 15, 30).getTime(); // Nov 9, 2026, 15:30 local
+
+  it('counts whole calendar days from today', () => {
+    expect(daysUntil('2026-12-18', now)).toBe(39);
+    expect(daysUntil('2026-11-09', now)).toBe(0);
+    expect(daysUntil('2026-11-10', now)).toBe(1);
+  });
+
+  it('goes negative for past dates', () => {
+    expect(daysUntil('2026-11-08', now)).toBe(-1);
+  });
+
+  it('returns null without a usable date', () => {
+    expect(daysUntil('', now)).toBeNull();
+    expect(daysUntil('not a date', now)).toBeNull();
+  });
+});
+
+describe('formatExpiryWithDays', () => {
+  const now = new Date(2026, 10, 9, 15, 30).getTime();
+
+  it('appends the time left to the formatted date', () => {
+    expect(formatExpiryWithDays('2026-12-18', now)).toMatch(/\(39 days\)$/);
+    expect(formatExpiryWithDays('2026-11-10', now)).toMatch(/\(1 day\)$/);
+    expect(formatExpiryWithDays('2026-11-09', now)).toMatch(/\(today\)$/);
+    expect(formatExpiryWithDays('2026-11-08', now)).toMatch(/\(1 day ago\)$/);
   });
 });

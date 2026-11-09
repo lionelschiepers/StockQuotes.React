@@ -91,6 +91,47 @@ function formatDate(isoString) {
   });
 }
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+// Midnight (in the user's timezone) as a UTC stamp, so comparing two dates is
+// a whole number of calendar days regardless of the time of day.
+function dayStamp(date) {
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+// Whole calendar days from today until `isoString`. Negative when the date has
+// already passed, null when it can't be parsed.
+export function daysUntil(isoString, now = Date.now()) {
+  if (!isoString) return null;
+
+  // Expiration dates are plain "YYYY-MM-DD" strings: read the parts directly
+  // so a UTC-parsed midnight can't slip into the previous day locally.
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})/.exec(isoString);
+  const target = dateOnly
+    ? Date.UTC(
+        Number(dateOnly[1]),
+        Number(dateOnly[2]) - 1,
+        Number(dateOnly[3])
+      )
+    : dayStamp(new Date(isoString));
+
+  if (Number.isNaN(target)) return null;
+  return Math.round((target - dayStamp(new Date(now))) / MS_PER_DAY);
+}
+
+// Expiration label with the time left, e.g. "Dec 18, 2026 (39 days)".
+export function formatExpiryWithDays(isoString, now = Date.now()) {
+  const label = formatDate(isoString);
+  const days = daysUntil(isoString, now);
+  if (days == null) return label;
+  if (days === 0) return `${label} (today)`;
+  if (days < 0) {
+    const elapsed = Math.abs(days);
+    return `${label} (${elapsed} day${elapsed === 1 ? '' : 's'} ago)`;
+  }
+  return `${label} (${days} day${days === 1 ? '' : 's'})`;
+}
+
 const dash = (text) => text || '–';
 
 const COLUMNS = [
@@ -338,7 +379,7 @@ const YahooFinanceOptionsModal = ({
             >
               {groups.map((group) => (
                 <option key={group.expirationDate} value={group.expirationDate}>
-                  {formatDate(group.expirationDate)}
+                  {formatExpiryWithDays(group.expirationDate)}
                 </option>
               ))}
             </select>
