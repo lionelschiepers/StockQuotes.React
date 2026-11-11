@@ -300,6 +300,21 @@
       "expect": "  brace-expansion: '5.0.13'"
     },
     {
+      "id": "parse-overrides-after-exclude-block",
+      "why": "pnpm 12 writes minimumReleaseAgeExclude before overrides with bare name@version list items, including a '||'-joined version line; parseOverrides must still return only the override (real 2026-11-11 file).",
+      "fn": "parseOverrides",
+      "input": "allowBuilds:\n  browser-tabs-lock: true\n\nminimumReleaseAgeExclude:\n  - '@rolldown/binding-win32-x64-msvc@1.2.18'\n  - vite@8.3.7 || 8.3.8\n  - brace-expansion@5.0.13\n  - papaparse@5.7.1\n\noverrides:\n  brace-expansion: '5.0.13'\n",
+      "expect": [
+        {
+          "name": "brace-expansion",
+          "spec": "5.0.13",
+          "index": 10,
+          "indent": 2,
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "write-plan-without-pnpm-update",
       "why": "A run that only updates packages must not crash while planning pnpm pins.",
       "fn": "planPnpmPins",
