@@ -24,6 +24,7 @@ minimumReleaseAgeExclude:
   - brace-expansion@5.0.13
   - papaparse@5.7.1
   - prettier@3.10.0
+  - jsdom@31.0.1
 
 overrides:
   brace-expansion: '5.0.13'

@@ -161,6 +161,7 @@ CurrencySwitch.propTypes = {
 const PortfolioTable = ({ positions, onOpenOptions }) => {
   const [displayInEUR, setDisplayInEUR] = useState(false);
   const [showClosed, setShowClosed] = useState(false);
+  const [search, setSearch] = useState('');
   const [sort, setSort] = useState({ field: null, direction: null });
 
   const openCount = useMemo(
@@ -169,12 +170,15 @@ const PortfolioTable = ({ positions, onOpenOptions }) => {
   );
 
   const rows = useMemo(() => {
-    const visible = showClosed
-      ? positions
-      : positions.filter((position) => position.NumberOfShares > 0);
+    const term = search.trim().toLowerCase();
+    const visible = positions.filter(
+      (position) =>
+        (showClosed || position.NumberOfShares > 0) &&
+        (term === '' || position.Name?.toLowerCase().includes(term))
+    );
     if (sort.field == null) return visible;
     return sortPositions(visible, sort.field, sort.direction, displayInEUR);
-  }, [positions, showClosed, sort, displayInEUR]);
+  }, [positions, showClosed, search, sort, displayInEUR]);
 
   // Names sort A to Z first; figures sort largest first.
   const handleSort = useCallback((field) => {
@@ -202,6 +206,14 @@ const PortfolioTable = ({ positions, onOpenOptions }) => {
           <span className="font-normal text-pencil">{openCount} open</span>
         </h2>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Filter by position name"
+            aria-label="Filter positions by name"
+            className="h-9 w-56 rounded-md border border-rule bg-transparent px-3 text-sm placeholder:text-pencil focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ledger"
+          />
           <CurrencySwitch
             displayInEUR={displayInEUR}
             onChange={setDisplayInEUR}
@@ -260,8 +272,9 @@ const PortfolioTable = ({ positions, onOpenOptions }) => {
                   colSpan={COLUMNS.length}
                   className="px-3 py-8 text-base text-pencil [font-stretch:100%]"
                 >
-                  No open positions. Turn on Show closed positions to see
-                  holdings you have sold.
+                  {search.trim() === ''
+                    ? 'No open positions. Turn on Show closed positions to see holdings you have sold.'
+                    : 'No positions match your filter.'}
                 </td>
               </tr>
             )}

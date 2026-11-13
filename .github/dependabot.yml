@@ -7,8 +7,8 @@ updates:
   # Keep exactly one entry for the repository root: duplicate entries for the
   # same directory make concurrent updater jobs fight over the same lockfile
   # and fail intermittently.
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
